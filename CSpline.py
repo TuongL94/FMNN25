@@ -22,6 +22,10 @@ class CSpline:
         
     controlPoints=property(getControlPoints,setControlPoints)
     def __call__(self,u):
+        i=(nodes>u).argmax()-1 #Find I
+        hotInterval=array([controlPoints(i-2),controlPoints(i-1),controlPoints(i),controlPoints(i+1)]) #Necessary controlpoints
+        #de Bor algorithm on the control points in the hot interval
+        #create function alpha(u,uRight,uLeft)
         
     def plot(self):
         
