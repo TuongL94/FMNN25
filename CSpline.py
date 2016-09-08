@@ -27,6 +27,14 @@ class CSpline:
         #de Bor algorithm on the control points in the hot interval
         #create function alpha(u,uRight,uLeft)
         
+    # function for merging two controlpoints
+    def merge(self,controlPoint1,controlPoint2,u):
+        uLeft=min(controlPoint1.getuLeft(),controlPoint2.getuLeft())
+        #same for uRight
+        value=alpha(u,uLeft,uRight)*controlPoint1.value()+(1-alpha(..))*controlPoint2.value() #Getting the value for the new
+        #controlPoint
+        # Find uLeft,uRight for new controlPoint
+        
     def plot(self):
         
     def getBasisFunction(self,nodes,j):
@@ -35,3 +43,14 @@ s=CSpline(1,2)
 s.__call__(u)
 s(u)
 print(s._controlPoints)
+
+#Class for the controlpoints
+class controlPoint:
+    def __init___(self,uLeft,uRight,value) #Probably need more u:s than uLeft and uRight
+        self._uLeft=uLeft
+        self._uRight=uRight
+        self.value=value
+    def getuLeft(self)
+        return self._uLeft
+    # And so on...
+    
