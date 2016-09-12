@@ -1,0 +1,67 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Sep 12 13:43:57 2016
+
+@author: Anders
+"""
+
+from scipy import *
+from pylab import *
+import unittest
+
+
+class TestFunction(unittest.TestCase):
+    #Testing the call function s(u) in the class CSpline
+    #The call function s(u) should not work for u:s that our outside of the defined
+    #interval nodes(2)<=u<=nodes(K-2)
+    def testCallFunction(self,spline,u):
+        self.assertIsInstance(spline(u),str,msg='Outside interval')
+     
+    #Testing that the basis functions adds up to unity at point u
+    def testUnityOfBasisFunction(self,spline,u,controlPoints):
+        length=len(controlPoints)
+        sum=0
+        for j in range(length):
+            sum=sum+spline.getBasisFunction(j)(u) #Need the name and specs of the "Task3" function
+        self.assertAlmostEqual(1.0,sum,msg='Basis function does not sum up to unity')
+     
+    #Testing that the de Boor algorithm gives the same result as the defined function 
+    def testEquality(self,spline,u,controlPoints):
+        length=len(controlPoints)
+        sum=array([0,0])
+        for j in range(length):
+            sum=sum+spline.getBasisFunction(j)(u)*controlPoints[j] #Need the name of the "Task3" function
+        #print(sum)
+        #print(spline(u))
+        self.assertTrue(allclose(spline(u),sum),msg='Algorithm not equal to basis functions result')
+
+
+#Testing of the call function
+# Creating random controlpoints and nodes
+controlPoints=array([[1,2],[3,4],[5,6]])
+nodes=array([0,1,2,5,7])
+ 
+#Creating a cubic spline
+s=CSpline(controlPoints,nodes)
+
+#Finding the minimum and maximum allowed node values
+us=s.getNodes()
+minNode=us[2]
+maxNode=us[-3]
+
+#Create a test object
+test=TestFunction()
+#Nodes outside of the allowed interval should raise an error
+test.testCallFunction(s,minNode-1)
+test.testCallFunction(s,maxNode+1)
+
+#Testing unity of the basis functions
+#Creating random u
+us=s.getNodes()
+u=uniform(us[2],us[-3]) #The algorithm should work for the min and maxvalues
+
+#Testing unity
+test.testUnityOfBasisFunction(s,u,s.getControlPoints())
+
+#Testing equality
+test.testEquality(s,u,s.getControlPoints())
