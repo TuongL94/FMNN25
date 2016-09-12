@@ -13,10 +13,11 @@ class CSpline:
     def __init__(self,controlPoints,nodes,polDeg=3):
         if len(controlPoints) < polDeg:
             raise Exception('Number of control points needs to at least', polDeg)
-        if len(nodes) < len(controlPoints)+2:
-            raise Exception('Number of nodes needs to at least', polDeg+2)
-        self._controlPoints=controlPoints
-        self._nodes=nodes
+        if len(nodes) != len(controlPoints)+2:
+            raise Exception('Number of nodes needs to be exactly ', len(controlPoints)+2)
+        #convert to float
+        self._controlPoints=controlPoints.astype(float)
+        self._nodes=nodes.astype(float)
         self._polDeg=polDeg
     def getControlPoints(self):
         return self._controlPoints
@@ -40,7 +41,10 @@ class CSpline:
         # calculate CSpline s(u) by DeBoor-algorithm
         for i in range(self._polDeg-1,-1,-1):
             for k in range(0,i):
-                alpha=(self._nodes[iPlusOne+k]-u)/(self._nodes[iPlusOne+k]-self._nodes[iPlusOne-3+k+i])
+                #calc the denom
+                alpha=(self._nodes[iPlusOne+k]-self._nodes[iPlusOne-3+k+i])
+                if alpha!=0:
+                    alpha=(self._nodes[iPlusOne+k]-u)/alpha
                 d[k]=alpha*d[k]+(1-alpha)*d[k+1]  
         return d[0]
         
@@ -48,10 +52,44 @@ class CSpline:
         
     #def plot(self):
         
-    #def getBasisFunction(self,nodes,j):
+    def getBasisFunction(self,j):
+        def basisFunc(u):
+            #basis
+            basisArr=array((self._polDeg+1)*[0])
+            #factors
+            factors=array([0,0])
+            # find hot interval
+            indexHotInt=(self._nodes > u).argmax ()
+            indexDiff=indexHotInt-j-1
+            if indexDiff>=0 and indexDiff<=self._polDeg:
+                basisArr[indexDiff]=1
+            else:
+                return 0
+            for k in range(1,self._polDeg):
+                for i in range(j,j+self._polDeg+1-k):
+                    #case out of bounds (-1)
+                    if i==0:
+                        factors[0]=0
+                    else:
+                        #calc denoms
+                        factors[0]=float(self._nodes[i+k-1]-self._nodes[i-1])
+                        if factors[0]!=0:
+                            factors[0]=(u-self._nodes[i-1])/factors[0]
+                    #case out of bounds (K+1)
+                    if i+k==len(self._nodes):
+                        factors[1]=0
+                    else:
+                        factors[1]=float(self._nodes[i+k]-self._nodes[i])
+                        if factors[1]!=0:
+                            factors[1]=(self._nodes[i+k]-u)/factors[1]
+                    basisArr[i-j]=factors[0]*basisArr[i-j]+factors[1]*basisArr[i-j+1]
+            return basisArr[0]
+        return basisFunc
         
-s=CSpline(array([[1,2],[3,4]]),array([0,1,2,5,7]))
-u=1.9
-print(s(u))
+nodes=array([0,1,2,4,5,7,8])
+s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)
+u=1
+#print(s(u))
 
+print(s.getBasisFunction(1)(u))
 #print(s._controlPoints)
