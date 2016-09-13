@@ -1,16 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Sep  7 14:07:26 2016
-@author: Bernhard
+Created on Thu Sep  8 13:31:08 2016
+
+@author: as
 """
+
 from  scipy import *
 from  pylab import *
 
 #class for representing a cubic spline
 class CSpline:
-    def __init__(self,controlPoints,nodes):
-        self._controlPoints=controlPoints
-        self._nodes=nodes
+    def __init__(self,controlPoints,nodes,polDeg=3):
+        if len(controlPoints) < polDeg:
+            raise Exception('Number of control points needs to at least', polDeg)
+        if len(nodes) != len(controlPoints)+2:
+            raise Exception('Number of nodes needs to be exactly ', len(controlPoints)+2)
+        #convert to float
+        self._controlPoints=controlPoints.astype(float)
+        self._nodes=nodes.astype(float)
+        self._polDeg=polDeg
     def getControlPoints(self):
         return self._controlPoints
     def setControlPoints(self,controlPoints):
@@ -21,67 +29,72 @@ class CSpline:
     #    controlPoints=temp
         
     controlPoints=property(getControlPoints,setControlPoints)
+    
     def __call__(self,u):
-        #find the hot interval (I=i+1)
-        i=(self.controlPoints<u).argmax()
-        #define n as the number of control points selected for calc (4=cubic)
-        n=4
-        #select the corresponding control points
-        #because the index for the control points starts at 0 and not -2
-        #we need to make a switch in the indizes
-        k=i
-        d=self.controlPoints[k:k+n]
-        #calc alphas and run the recursion
-#        alpha=n*[0]
-#        for j in range(0,n):
-#            if j+i+2>=len(self._nodes):
-#                node2=0
-#            else:
-#                node2=self._nodes[j+i+2]
-#            if j+i==0 or j+i>len(self._nodes):
-#                node1=0
-#            else:
-#                node1=self._nodes[j+i-1]
-#            #if j+i+2!=len(self._nodes) and j+i!=0:
-#            denom=node2-node1
-#            if denom!=0:
-#                alpha[j]=(node2-u)/denom
-        nodes=(n+3)*[0]
-        for j in range(0,n+3):
-            if j+i>0 and j+i<=len(self._nodes):
-                nodes[j]=self._nodes[j+i-1]
-        return self.__recursiveDeBoor__(d,nodes)
-            
+        # find hot interval
+        iPlusOne=(self._nodes > u). argmax ()
+        # error message when u not in possible interval
+        if iPlusOne < 3 or iPlusOne > len(self._nodes)-2:
+            raise Exception('Choose u between', self._nodes[2], self._nodes[len(self._nodes)-2])
+        # collect needed controlpoints
+        d=array(self._controlPoints[iPlusOne-3:iPlusOne+1])
+        # calculate CSpline s(u) by DeBoor-algorithm
+        for i in range(self._polDeg-1,-1,-1):
+            for k in range(0,i):
+                #calc the denom
+                alpha=(self._nodes[iPlusOne+k]-self._nodes[iPlusOne-3+k+i])
+                if alpha!=0:
+                    alpha=(self._nodes[iPlusOne+k]-u)/alpha
+                d[k]=alpha*d[k]+(1-alpha)*d[k+1]  
+        return d[0]
         
-
-    def __recursiveDeBoor__(self,d,nodes):
-        n=len(d)
-        if n==1:
-            return d[0]
-        else:
-            lenDif=len(nodes)-len(d)
-            alpha=n*[0]
-            for i in range(0,n-1):
-                denom=nodes[i+lenDif]-nodes[i]
-                if denom!=0:
-                    alpha[i]=(nodes[i+lenDif]-u)/denom
-                #manipulate the given d
-                if i>0:
-                    d[i-1]=alpha[i-1]*d[i-1]+(1-alpha[i])*d[i]
-            denom=nodes[n-1+lenDif]-nodes[n-1]
-            if denom!=0:
-                alpha[n-1]=(nodes[n-1+lenDif]-u)/denom
-            d[n-2]==alpha[n-2]*d[n-2]+(1-alpha[n-1])*d[n-1]
-            return self.__recursiveDeBoor__(d[:-1],nodes)
-    def plot(self):
-        return 0
         
-def getBasisFunction(self,nodes,j):
-    return 0
-
-s=CSpline(array([1,2,3,4]),[0,1])
-u=0.5
-c=s.__call__(u)
-s(u)
-print(s.controlPoints)
-print(c)
+        
+    #def plot(self):
+        
+    def getBasisFunction(self,j):
+        def basisFunc(u):
+            #basis
+            basisArr=array((self._polDeg+1)*[0.])
+            #factors
+            factors=array([0.,0.])
+            # find hot interval
+            indexHotInt=(self._nodes > u).argmax ()
+            indexDiff=indexHotInt-j-1
+            if indexDiff>=0 and indexDiff<=self._polDeg:
+                basisArr[indexDiff]=1
+            else:
+                return 0
+            for k in range(1,self._polDeg+1):
+                for i in range(j,j+self._polDeg+1-k):
+                    #case out of bounds (-1) (u[-1]=u[0])
+                    if i==0:
+                        #calc denoms
+                        factors[0]=self._nodes[i+k-1]-self._nodes[i]
+                        if factors[0]!=0:
+                            factors[0]=(u-self._nodes[i])/factors[0]
+                    else:
+                        #calc denoms
+                        factors[0]=self._nodes[i+k-1]-self._nodes[i-1]
+                        if factors[0]!=0:
+                            factors[0]=(u-self._nodes[i-1])/factors[0]
+                    #case out of bounds (K+1) (u[K+1]=u[k])
+                    if i+k==len(self._nodes):
+                        factors[1]=self._nodes[i+k-1]-self._nodes[i]
+                        if factors[1]!=0:
+                            factors[1]=(self._nodes[i+k-1]-u)/factors[1]
+                    else:
+                        factors[1]=self._nodes[i+k]-self._nodes[i]
+                        if factors[1]!=0:
+                            factors[1]=(self._nodes[i+k]-u)/factors[1]
+                    basisArr[i-j]=factors[0]*basisArr[i-j]+factors[1]*basisArr[i-j+1]
+            return basisArr[0]
+        return basisFunc
+        
+nodes=array([0,1,2,3,4,7,8])
+s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)
+u=3
+#print(s(u))
+for i in range(0,5):
+    print(s.getBasisFunction(1)(nodes[i]))
+#print(s._controlPoints)
