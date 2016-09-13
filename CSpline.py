@@ -32,7 +32,7 @@ class CSpline:
     
     def __call__(self,u):
         # find hot interval
-        iPlusOne=(self._nodes > u). argmax ()
+        iPlusOne=self.getHotInterval(u)
         # error message when u not in possible interval
         if iPlusOne < 3 or iPlusOne > len(self._nodes)-2:
             raise Exception('Choose u between', self._nodes[2], self._nodes[len(self._nodes)-2])
@@ -48,7 +48,12 @@ class CSpline:
                 d[k]=alpha*d[k]+(1-alpha)*d[k+1]  
         return d[0]
         
-        
+    '''
+    
+    '''
+    def getHotInterval(self,u):
+        # find hot interval
+        return (self._nodes > u). argmax ()
         
     #def plot(self):
         
@@ -59,7 +64,7 @@ class CSpline:
             #factors
             factors=array([0.,0.])
             # find hot interval
-            indexHotInt=(self._nodes > u).argmax ()
+            indexHotInt=self.getHotInterval(u)
             indexDiff=indexHotInt-j-1
             if indexDiff>=0 and indexDiff<=self._polDeg:
                 basisArr[indexDiff]=1
