@@ -61,8 +61,17 @@ class CSpline:
     def getHotInterval(self,u):
         # find hot interval
         return (self._nodes > u). argmax ()
-        
-    #def plot(self):
+    
+    #Plot function. The function plots the spline between defined nodes. It also plots the 
+    #control points.
+    def plot(self):
+        us=linspace(self._nodes[2],self._nodes[-3])
+        ss=zeros((2,len(us))) #Value of the splines for the inputs us
+        for k in range(len(us)):
+            ss[:,k]=s(us[k])
+        contPoints=self.getControlPoints()
+        plot(ss[0,:],ss[1,:])
+        scatter(contPoints[:,0],contPoints[:,1])
         
     def getBasisFunction(self,j):
         def basisFunc(u):
