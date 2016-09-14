@@ -46,8 +46,8 @@ class CSpline:
         # collect needed controlpoints
         d=array(self._controlPoints[iPlusOne-3:iPlusOne+1])
         # calculate CSpline s(u) by DeBoor-algorithm
-        for i in range(self._polDeg-1,-1,-1):
-            for k in range(0,i):
+        for i in range(0,self._polDeg):
+            for k in range(0,self._polDeg-i):
                 #calc the denom
                 alpha=(self._nodes[iPlusOne+k]-self._nodes[iPlusOne-3+k+i])
                 if alpha!=0:
@@ -106,7 +106,7 @@ class CSpline:
 nodes=array([0,1,2,3,4,7,8])
 s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)
 u=3
-#print(s(u))
+print(s(u))
 for i in range(0,5):
     print(s.getBasisFunction(1)(nodes[i]))
 #print(s._controlPoints)
