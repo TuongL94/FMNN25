@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; CSpline 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="CSpline 1.0 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CSpline 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <ol class="arabic simple">
+<li>Lecture</li>
+</ol>
+<p>datatypes
+float           -1.0
+integer -1
+complex -&gt; 1+3j
+string  &#8220;anna&#8217;s baby&#8221;, &#8216;anna&#8217; (&#8216;a&#8217;+2*&#8217;n&#8217;+a)</p>
+<p>Container types
+l=[3,3.0,&#8217;anna&#8217;,[1,2]] list (first index is 0)
+l[0]    #3
+slicing l[1:3]  #[3.0,&#8217;anna&#8217;] (without the last one =&gt; use length)</p>
+<p>l[:-1] (-1=the last one) (take all except the last one)
+l[-3:] #[3.0,&#8217;anna&#8217;,[1,2]]</p>
+<p>dictionary
+st={&#8216;name&#8217;:&#8217;anna&#8217;,&#8217;pers&#8217;:&#8216;19....&#8217;,&#8217;program&#8217;:&#8217;F&#8217;}
+st[&#8216;pers&#8217;]</p>
+<p>linebreaks!!!</p>
+<p>a= (&lt;-to tell the compiler that here is a linebreak)
+3
+a=[1,
+3,4]</p>
+<p>a=set([1,2,2,3,4])
+a       #{1,2,3,4}</p>
+<p>idea: clear duplicates =&gt; list-&gt;set-&gt;list (but do not ensure the same ordering, because set has no ordering)</p>
+<p>tupel:
+a=(3,4) (the paratheses are not needed!)
+a[1]=5
+tupel is immutable
+a=3, is a tupel</p>
+<p>l=[0]
+l=3000*l (=[0,0,...,0] - 3000 times &lt;=&gt; l*=3000)</p>
+<p>array
+v=array([1,2,3.]) (only the same datatypes of objects in it)
+k=3*v
+k       #array([3.,6.,9.])
+v[0]
+transpose on array does nothing
+v.reshape((3,1)) (now transpose makes sense)</p>
+<p>not-dot-product
+v*v     (#[1,4,9])
+dot-product
+v&#64;v &lt;=&gt; dot(v,v) (needs the same dimension)</p>
+<p>[] None
+a=True
+3&gt;4 or 4&gt;3
+==
+&#8216;anna&#8217; or False</p>
+<p>Boolean arrays (homework)
+4&lt;5&lt;3 =&gt; True(=1)&lt;3 =&gt; True
+3&lt;x&lt;5</p>
+<p>Python has no and!</p>
+<dl class="docutils">
+<dt>for a in [1,2,4,5]:</dt>
+<dd><div class="first last line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line">(it is necessary to use tabs, intentations matters)</div>
+</div>
+</div>
+</dd>
+</dl>
+<p>c=3
+print(a)</p>
+<p>functions:
+def name(....):</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<p>return a,b (return always one thing.. here it is a tupel)</p>
+</div></blockquote>
+<p>c=name(3,4)
+d,e=name(3,4)
+(packing and unpacking)</p>
+<p>no return =&gt; none object would be returned</p>
+<p>name(a,b,c,d,e)
+l=[1,2,3,4,5]
+c=name(<a href="#id1"><span class="problematic" id="id2">*</span></a>l)
+d={&#8216;f&#8217;:3,&#8217;a&#8217;:4,...}
+name(<a href="#id3"><span class="problematic" id="id4">**</span></a>d)</p>
+<p>def name(a,b,**kwargs) (keywordarguments.. put it in a dictionary)
+loop through the dictionary and take out what you need</p>
+<p>quad(f,a,v,*args)
+f(x,*args)</p>
+<ol class="arabic simple" start="2">
+<li>Lecture</li>
+</ol>
+<p>scipy
+numpy
+matplotlib</p>
+<p>make packages available:
+import scipy
+a=scipy.sin(scipy.pi)
+%2. alternative (for advandced packages)
+import scipy as se
+a=sc.sin(sc.pi)
+%3. alternative
+from scipy import sin,pi
+a=sin(pi)
+%4. alternative (we use this alternative for scipy)
+from scipy import *
+a=sin(pi)</p>
+<p>datatypes:
+a=[1,2,3]
+methods for datatypes:
+a+a     #=[1,2,3,1,2,3]</p>
+<p>wish-list (Rational number)
+a) Instantiation
+r=RationalNumber(30,40) #3/4
+b) Attributes
+r.numerator             #40
+r.denominator           #30
+c)Methods
+r.shorten()             #3/4
+r.__str__()             #hidden (but not private)</p>
+<p>__ge__  #greater-equals
+__lt__  #less than
+__mult__        #mult
+__iadd__        #+=
+__item__        #r[]
+__call__        #r()
+__radd__        #other+self
+__add__ #self+other</p>
+<p>protect attributes: (hide attributes)
+class triangle</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>def __init__(self,A,B,C)</dt>
+<dd>self._A=A
+self._B=B
+self._C=C
+...</dd>
+<dt>def getA(self):</dt>
+<dd>...</dd>
+</dl>
+<p>A=property(getA,setA,documentationA,delA)</p>
+</div></blockquote>
+<p>t.A= #calls the setterfunction</p>
+<p>tomorrow: blossoms and splines</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Mitschrift.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CSpline 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Anders Hansson, Annika Stegie, Berhard Pöchtrager, Tuong Lam.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

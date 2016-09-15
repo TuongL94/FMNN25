@@ -7,8 +7,11 @@ Created on Wed Sep  7 14:07:26 2016
 
 from  scipy import *
 from  pylab import *
-
-#class for representing a cubic spline
+"""
+Class for representing a cubic spline
+The  class can acrually be used to create ana n'th-order spline but as the 
+project was designed to work with cubic splines, the order is set to 3.
+"""
 class CSpline:
     def __init__(self,controlPoints,nodes,polDeg=3):
         if len(controlPoints) < polDeg:
@@ -19,33 +22,47 @@ class CSpline:
         self._controlPoints=controlPoints.astype(float)
         self._nodes=nodes.astype(float)
         self._polDeg=polDeg
-    #get-function of the control points
+    """    
+    get-function of the control points
+    
+    """
     def getControlPoints(self):
         return self._controlPoints
-    #set-function of the control points
+    """    
+    set-function of the control points
+    
+    """
     def setControlPoints(self,controlPoints):
         self._controlPoints=controlPoints
     controlPoints=property(getControlPoints,setControlPoints)
     
-    #get-function of the nodes
+    """
+    get-function of the nodes
+    
+    """
     def getNodes(self):
         return self._controlPoints
-    #set-function of the nodes
+    """    
+    set-function of the nodes
+    
+    """
     def setNodes(self,controlPoints):
         self._controlPoints=controlPoints
     controlPoints=property(getControlPoints,setControlPoints)
     
-    #call function of the spline
-    #you are able to call the function with s(u) (s is an instance of a CSpline)   
+    """
+    call function of the spline
+    you are able to call the function with s(u) (s is an instance of a CSpline)   
+    """    
     def __call__(self,u):
-        # find hot interval
+        #find hot interval
         iPlusOne=self.getHotInterval(u)
-        # error message when u not in possible interval
+        #error message when u not in possible interval
         if iPlusOne < 3 or iPlusOne > len(self._nodes)-2:
             raise Exception('Choose u between', self._nodes[2], self._nodes[len(self._nodes)-2])
-        # collect needed controlpoints
+        #collect needed controlpoints
         d=array(self._controlPoints[iPlusOne-3:iPlusOne+1])
-        # calculate CSpline s(u) by DeBoor-algorithm
+        #calculate CSpline s(u) by DeBoor-algorithm
         for i in range(0,self._polDeg):
             for k in range(0,self._polDeg-i):
                 #calc the denom
@@ -54,19 +71,20 @@ class CSpline:
                     alpha=(self._nodes[iPlusOne+k]-u)/alpha
                 d[k]=alpha*d[k]+(1-alpha)*d[k+1]  
         return d[0]
-        
-    '''
-    returns the second where u is in it (u\in[u_index-1,u_index])
-    '''
+    #returns the second where u is in it (u\in[u_index-1,u_index])
     def getHotInterval(self,u):
-        # find hot interval
+        #find hot interval
         return (self._nodes > u). argmax ()
-    
-    #Plot function. The function plots the spline between defined nodes. It also plots the 
-    #control points.
+        
+    """    
+    Plot function. The function plots the spline between defined nodes. It also plots the 
+    control points.
+    """
+
     def plot(self):
         us=linspace(self._nodes[2],self._nodes[-3])
-        ss=zeros((2,len(us))) #Value of the splines for the inputs us
+        #Value of the splines for the inputs us
+        ss=zeros((2,len(us))) 
         for k in range(len(us)):
             ss[:,k]=s(us[k])
         contPoints=self.getControlPoints()
@@ -79,7 +97,7 @@ class CSpline:
             basisArr=array((self._polDeg+1)*[0.])
             #factors
             factors=array([0.,0.])
-            # find hot interval
+            #find hot interval
             indexHotInt=self.getHotInterval(u)
             indexDiff=indexHotInt-j-1
             if indexDiff>=0 and indexDiff<=self._polDeg:
@@ -112,10 +130,10 @@ class CSpline:
             return basisArr[0]
         return basisFunc
         
-nodes=array([0,1,2,3,4,7,8])
-s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)
-u=3
-print(s(u))
-for i in range(0,5):
-    print(s.getBasisFunction(1)(nodes[i]))
+#nodes=array([0,1,2,3,4,7,8])
+#s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)
+#u=3
+#print(s(u))
+#for i in range(0,5):
+#    print(s.getBasisFunction(1)(nodes[i]))
 #print(s._controlPoints)
