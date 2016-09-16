@@ -7,13 +7,27 @@ Created on Wed Sep  7 14:07:26 2016
 
 from  scipy import *
 from  pylab import *
-"""
-Class for representing a cubic spline
-The  class can acrually be used to create ana n'th-order spline but as the 
-project was designed to work with cubic splines, the order is set to 3.
-"""
+
+#def __main__():
+#    nodes=array([0,1,2,3,4,7,8])
+#    s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)
+#    return 0
+
 class CSpline:
+    """
+    Class for representing a cubic spline
+    The  class can actually be used to create any n'th-order spline but as the 
+    project was designed to work with cubic splines, the order is set to 3.
+    """
+    
     def __init__(self,controlPoints,nodes,polDeg=3):
+        """
+        creates the control points and nodes associated with the class
+        
+        :type controlPoints: vector of
+        :param controlPoints: d's in the slides
+        """
+        
         if len(controlPoints) < polDeg:
             raise Exception('Number of control points needs to at least', polDeg)
         if len(nodes) != len(controlPoints)+2:
@@ -22,6 +36,9 @@ class CSpline:
         self._controlPoints=controlPoints.astype(float)
         self._nodes=nodes.astype(float)
         self._polDeg=polDeg
+        
+        
+
     """    
     get-function of the control points
     
@@ -129,6 +146,9 @@ class CSpline:
                     basisArr[i-j]=factors[0]*basisArr[i-j]+factors[1]*basisArr[i-j+1]
             return basisArr[0]
         return basisFunc
+        
+
+#if __name__ == '__main__':
         
 #nodes=array([0,1,2,3,4,7,8])
 #s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)

@@ -1,0 +1,7 @@
+CSpline module
+==============
+
+.. automodule:: CSpline
+    :members:
+    :undoc-members:
+    :show-inheritance:

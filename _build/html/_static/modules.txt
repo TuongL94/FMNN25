@@ -1,0 +1,8 @@
+NumericalAlgorithmAssignments
+=============================
+
+.. toctree::
+   :maxdepth: 4
+
+   CSpline
+   conf

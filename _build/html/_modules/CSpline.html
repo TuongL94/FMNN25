@@ -57,42 +57,63 @@
 
 <span class="kn">from</span>  <span class="nn">scipy</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span>  <span class="nn">pylab</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">class for representing a cubic spline</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline">[docs]</a><span class="k">class</span> <span class="nc">CSpline</span><span class="p">:</span>
+
+<span class="c1">#def __main__():</span>
+<span class="c1">#    nodes=array([0,1,2,3,4,7,8])</span>
+<span class="c1">#    s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)</span>
+<span class="c1">#    return 0</span>
+
+<div class="viewcode-block" id="CSpline"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline">[docs]</a><span class="k">class</span> <span class="nc">CSpline</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for representing a cubic spline</span>
+<span class="sd">    The  class can actually be used to create any n&#39;th-order spline but as the </span>
+<span class="sd">    project was designed to work with cubic splines, the order is set to 3.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">controlPoints</span><span class="p">,</span><span class="n">nodes</span><span class="p">,</span><span class="n">polDeg</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        creates the control points and nodes associated with the class</span>
+<span class="sd">        </span>
+<span class="sd">        :type controlPoints: vector of</span>
+<span class="sd">        :param controlPoints: d&#39;s in the slides</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">controlPoints</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">polDeg</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Number of control points needs to at least&#39;</span><span class="p">,</span> <span class="n">polDeg</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">controlPoints</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Number of nodes needs to be exactly &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">controlPoints</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        convert to float</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#convert to float</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_controlPoints</span><span class="o">=</span><span class="n">controlPoints</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">=</span><span class="n">nodes</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_polDeg</span><span class="o">=</span><span class="n">polDeg</span>
+        
+        
+
     <span class="sd">&quot;&quot;&quot;    </span>
 <span class="sd">    get-function of the control points</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline.getControlPoints"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.getControlPoints">[docs]</a>    <span class="k">def</span> <span class="nf">getControlPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CSpline.getControlPoints"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.getControlPoints">[docs]</a>    <span class="k">def</span> <span class="nf">getControlPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlPoints</span></div>
     <span class="sd">&quot;&quot;&quot;    </span>
 <span class="sd">    set-function of the control points</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline.setControlPoints"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.setControlPoints">[docs]</a>    <span class="k">def</span> <span class="nf">setControlPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">controlPoints</span><span class="p">):</span>
+<div class="viewcode-block" id="CSpline.setControlPoints"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.setControlPoints">[docs]</a>    <span class="k">def</span> <span class="nf">setControlPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">controlPoints</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_controlPoints</span><span class="o">=</span><span class="n">controlPoints</span></div>
     <span class="n">controlPoints</span><span class="o">=</span><span class="nb">property</span><span class="p">(</span><span class="n">getControlPoints</span><span class="p">,</span><span class="n">setControlPoints</span><span class="p">)</span>
     
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    get-function of the nodes</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline.getNodes"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.getNodes">[docs]</a>    <span class="k">def</span> <span class="nf">getNodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CSpline.getNodes"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.getNodes">[docs]</a>    <span class="k">def</span> <span class="nf">getNodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlPoints</span></div>
     <span class="sd">&quot;&quot;&quot;    </span>
 <span class="sd">    set-function of the nodes</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline.setNodes"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.setNodes">[docs]</a>    <span class="k">def</span> <span class="nf">setNodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">controlPoints</span><span class="p">):</span>
+<div class="viewcode-block" id="CSpline.setNodes"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.setNodes">[docs]</a>    <span class="k">def</span> <span class="nf">setNodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">controlPoints</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_controlPoints</span><span class="o">=</span><span class="n">controlPoints</span></div>
     <span class="n">controlPoints</span><span class="o">=</span><span class="nb">property</span><span class="p">(</span><span class="n">getControlPoints</span><span class="p">,</span><span class="n">setControlPoints</span><span class="p">)</span>
     
@@ -101,51 +122,35 @@
 <span class="sd">    you are able to call the function with s(u) (s is an instance of a CSpline)   </span>
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        find hot interval</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#find hot interval</span>
         <span class="n">iPlusOne</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getHotInterval</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        error message when u not in possible interval</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#error message when u not in possible interval</span>
         <span class="k">if</span> <span class="n">iPlusOne</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">iPlusOne</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Choose u between&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-        <span class="sd">&quot;&quot;&quot;        </span>
-<span class="sd">        collect needed controlpoints</span>
-<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="c1">#collect needed controlpoints</span>
         <span class="n">d</span><span class="o">=</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_controlPoints</span><span class="p">[</span><span class="n">iPlusOne</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="n">iPlusOne</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-        <span class="sd">&quot;&quot;&quot;        </span>
-<span class="sd">        calculate CSpline s(u) by DeBoor-algorithm</span>
-<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="c1">#calculate CSpline s(u) by DeBoor-algorithm</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_polDeg</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_polDeg</span><span class="o">-</span><span class="n">i</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                calc the denom</span>
-<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="c1">#calc the denom</span>
                 <span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">iPlusOne</span><span class="o">+</span><span class="n">k</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">iPlusOne</span><span class="o">-</span><span class="mi">3</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="n">i</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">alpha</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
                     <span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">iPlusOne</span><span class="o">+</span><span class="n">k</span><span class="p">]</span><span class="o">-</span><span class="n">u</span><span class="p">)</span><span class="o">/</span><span class="n">alpha</span>
                 <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">alpha</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>  
         <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    returns the second where u is in it (u\in[u_index-1,u_index])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline.getHotInterval"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.getHotInterval">[docs]</a>    <span class="k">def</span> <span class="nf">getHotInterval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        find hot interval</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="c1">#returns the second where u is in it (u\in[u_index-1,u_index])</span>
+<div class="viewcode-block" id="CSpline.getHotInterval"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.getHotInterval">[docs]</a>    <span class="k">def</span> <span class="nf">getHotInterval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">u</span><span class="p">):</span>
+        <span class="c1">#find hot interval</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">&gt;</span> <span class="n">u</span><span class="p">)</span><span class="o">.</span> <span class="n">argmax</span> <span class="p">()</span>
-    </div>
-    <span class="sd">&quot;&quot;&quot;</span>
+        </div>
+    <span class="sd">&quot;&quot;&quot;    </span>
 <span class="sd">    Plot function. The function plots the spline between defined nodes. It also plots the </span>
 <span class="sd">    control points.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CSpline.plot"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CSpline.plot"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">us</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Value of the splines for the inputs us</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#Value of the splines for the inputs us</span>
         <span class="n">ss</span><span class="o">=</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">us</span><span class="p">)))</span> 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">us</span><span class="p">)):</span>
             <span class="n">ss</span><span class="p">[:,</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">s</span><span class="p">(</span><span class="n">us</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
@@ -153,19 +158,13 @@
         <span class="n">plot</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="n">ss</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
         <span class="n">scatter</span><span class="p">(</span><span class="n">contPoints</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">contPoints</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
         </div>
-<div class="viewcode-block" id="CSpline.getBasisFunction"><a class="viewcode-back" href="../CSpline.html#CSpline.CSpline.getBasisFunction">[docs]</a>    <span class="k">def</span> <span class="nf">getBasisFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
+<div class="viewcode-block" id="CSpline.getBasisFunction"><a class="viewcode-back" href="../_static/CSpline.html#CSpline.CSpline.getBasisFunction">[docs]</a>    <span class="k">def</span> <span class="nf">getBasisFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">basisFunc</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            basis</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1">#basis</span>
             <span class="n">basisArr</span><span class="o">=</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_polDeg</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">[</span><span class="mf">0.</span><span class="p">])</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            factors</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1">#factors</span>
             <span class="n">factors</span><span class="o">=</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            find hot interval</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1">#find hot interval</span>
             <span class="n">indexHotInt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getHotInterval</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
             <span class="n">indexDiff</span><span class="o">=</span><span class="n">indexHotInt</span><span class="o">-</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span>
             <span class="k">if</span> <span class="n">indexDiff</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">indexDiff</span><span class="o">&lt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">_polDeg</span><span class="p">:</span>
@@ -197,6 +196,9 @@
                     <span class="n">basisArr</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">factors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">basisArr</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">factors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">basisArr</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">basisArr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">basisFunc</span>
+        
+
+<span class="c1">#if __name__ == &#39;__main__&#39;:</span>
         
 <span class="c1">#nodes=array([0,1,2,3,4,7,8])</span>
 <span class="c1">#s=CSpline(array([[1,2],[3,4],[3,5],[3,6],[4,6]]),nodes)</span>

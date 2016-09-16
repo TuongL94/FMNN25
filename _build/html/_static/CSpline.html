@@ -8,39 +8,35 @@
     
     <title>CSpline module &mdash; CSpline 1.0 documentation</title>
     
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="classic.css" type="text/css" />
+    <link rel="stylesheet" href="pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
+        URL_ROOT:    '../',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="CSpline 1.0 documentation" href="index.html" />
-    <link rel="prev" title="Welcome to CSpline’s documentation!" href="index.html" /> 
+    <link rel="top" title="CSpline 1.0 documentation" href="../index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to CSpline’s documentation!"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">CSpline 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CSpline 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,7 +51,7 @@
 <p>&#64;author: Group</p>
 <dl class="class">
 <dt id="CSpline.CSpline">
-<em class="property">class </em><code class="descclassname">CSpline.</code><code class="descname">CSpline</code><span class="sig-paren">(</span><em>controlPoints</em>, <em>nodes</em>, <em>polDeg=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">CSpline.</code><code class="descname">CSpline</code><span class="sig-paren">(</span><em>controlPoints</em>, <em>nodes</em>, <em>polDeg=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Class for representing a cubic spline
 The  class can actually be used to create any n&#8217;th-order spline but as the 
@@ -69,37 +65,37 @@ you are able to call the function with s(u) (s is an instance of a CSpline)</p>
 
 <dl class="method">
 <dt id="CSpline.CSpline.getBasisFunction">
-<code class="descname">getBasisFunction</code><span class="sig-paren">(</span><em>j</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.getBasisFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getBasisFunction" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getBasisFunction</code><span class="sig-paren">(</span><em>j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.getBasisFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getBasisFunction" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="CSpline.CSpline.getControlPoints">
-<code class="descname">getControlPoints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.getControlPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getControlPoints" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getControlPoints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.getControlPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getControlPoints" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="CSpline.CSpline.getHotInterval">
-<code class="descname">getHotInterval</code><span class="sig-paren">(</span><em>u</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.getHotInterval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getHotInterval" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getHotInterval</code><span class="sig-paren">(</span><em>u</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.getHotInterval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getHotInterval" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="CSpline.CSpline.getNodes">
-<code class="descname">getNodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.getNodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getNodes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getNodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.getNodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.getNodes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="CSpline.CSpline.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.plot" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="CSpline.CSpline.setControlPoints">
-<code class="descname">setControlPoints</code><span class="sig-paren">(</span><em>controlPoints</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.setControlPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.setControlPoints" title="Permalink to this definition">¶</a></dt>
+<code class="descname">setControlPoints</code><span class="sig-paren">(</span><em>controlPoints</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.setControlPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.setControlPoints" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="CSpline.CSpline.setNodes">
-<code class="descname">setNodes</code><span class="sig-paren">(</span><em>controlPoints</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CSpline.html#CSpline.setNodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.setNodes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">setNodes</code><span class="sig-paren">(</span><em>controlPoints</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CSpline.html#CSpline.setNodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CSpline.CSpline.setNodes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3022,19 +3018,16 @@ the probability density function:</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to CSpline&#8217;s documentation!</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/CSpline.txt"
+      <li><a href="../_sources/_static/CSpline.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -3053,15 +3046,12 @@ the probability density function:</p>
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to CSpline’s documentation!"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">CSpline 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CSpline 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
