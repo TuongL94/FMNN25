@@ -36,7 +36,7 @@ class QuasiNewton(OptimizationMethods):
       #if self._linesearch=exact
           #linesearch()=exactlinesearch()
         
-    def solve(self,x0,tol=10^-5,kmax):
+    def solve(self,x0,tol=10^-5,kmax=100):
         xk=x0
         H=... #Initial value
         
