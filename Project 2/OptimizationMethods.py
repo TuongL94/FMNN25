@@ -65,5 +65,10 @@ class OptimizationMethods:
 
         :return:
         """
+        h = # preallocate matrix of size len(xk)*len(xk)? Or just append?
+        for i in range(len(xk)):
+            for j in range(len(xk)):
+                h[i,j] = (optProb.g(xk[i]+0.5e-5)[j]-optProb.g(xk[i]-0.5e-5)[j])/1e-5
+        h = 1/2*(h+h.T)
 
 
