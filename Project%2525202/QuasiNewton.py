@@ -63,6 +63,8 @@ class QuasiNewton(OptimizationMethods):
         
     def solve(self,x0,tol=10^-5,kmax=100):
         #H=... #Initial value))
+        # first step always done with dinite difference approximation of Hessian,
+        # because for update methods, two initial x-values are needed
         H=super().finiteDifference
         if optProb.g(x0)<tol:
             if super().isPosDef()==False: #Hessian is not positive definite - Error message? only stationary point found?
@@ -72,6 +74,7 @@ class QuasiNewton(OptimizationMethods):
         alfa=self.linesearch(x0,sk)
         xk=xk+alfa*sk
         xkPrev=x0
+        # iterational process starts
         for k in range(kmax):
             H=updateHessian(xk,xkPrev)
             if optProb.g(xk)<tol:

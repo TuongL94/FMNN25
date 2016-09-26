@@ -12,68 +12,71 @@ class OptimizationMethods:
     #define constants for conditions on the inexact line search (Wolfe-Powell-Parameter)
     ALPHAL=0;
     ALPHAU=math.pow(10,99);
-    def lineSearchExactSteepestDesent(self,xk,stepsize,alfa=1,beta=.5,gamma=1e-2):
-        """
-        This function just needs the parameter x,alpha0 and s.
-        The rest of the parameters are not used in this function!
-        :return:
-        """
-        # several methods possible
+    
+    # several line search methods possible
         # for example again a Newton Method, Bisection, Steepest descent
         
         # Bisection - discard it because it is really hard to get a good initial guess
         # and it is slow
         # actually not such a nice method because the sign-change has to be detected
         # evalute f at different points around xk to detect sign change
-        #leftEnd = #nearest point to the left of sign change
-        #rightEnd = #nearest point to the right of sign change
+        # leftEnd = #nearest point to the left of sign change
+        # rightEnd = #nearest point to the right of sign change
         # a starting alpha is needed, maybe take 1?
-        # have to find min of fAlfa, root of gAlfa
-#        gAlfa = g(alfa*xk)
-#        alfa = (rightEnd-leftEnd)/2       
-#        while gAlfa > tol:
-#            if gAlfa == 0:
-#                return alfa
-#            elif gAlfa*f(leftEnd*xk) < 0:
-#                rightEnd = alfa
+        # have to find min of fAlpha, root of gAlpha
+#        gAlpha = g(xk+alpha*sk)
+#        alpha = (rightEnd-leftEnd)/2       
+#        while gAlpha > tol:
+#            if gAlpha == 0:
+#                return alpha
+#            elif gAlpha*f(xk+leftEnd*sk) < 0:
+#                rightEnd = alpha
 #            else :
-#                leftEnd = alfa
-#            alfa = (rightEnd-leftEnd)/2
-#            gAlfa = g(alfa*xk)
+#                leftEnd = alpha
+#            alpha = (rightEnd-leftEnd)/2
+#            gAlpha = g(xk+alpha*sk)
 #            # it shoukd be checked if this is really a min or any other stationary point
-#            if (g((alfa+0.5e-5)*xk)-g((alfa-0.5e-5)*xk))/1e-5 <= 0:
+#            if (g(xk+(alpha+0.5e-5)*sk)-g(xk+(alpha-0.5e-5)*sk))/1e-5 <= 0:
 #                #what should be done here?
-#        return alfa
+#        return alpha
+    def lineSearchExactSteepestDesent(self,xk,sk,alpha=1,beta=.5,gamma=1e-2):
+        """
+        Method to calculate the stepsize in a Quasi-Newton method by the
+        steepest descent algorithm.
+        This function just needs the parameter xk, sk and optionally alpha.
+        alpha = 1 is the default initial guess to start the algorithm.
+        The rest of the parameters is not changed!
+        :return: alpha
+        """
         # Steepest descent method
-        # starting alfa
-        while g(alfa*xk) > tol:
+        while g(xk+alpha*sk) > tol:
             # stepsize calculated by Armijo's method              
             exponent = 1
             stepsize = 1
-            while f(alfa-stepsize*g(alfa*xk))-f(alfa*xk) <= -stepsize*gamma*norm(g(alpha*xk))**2:
+            while f(xk+alpha*sk-stepsize*g(xk+alpha*sk))-f(xk+alpha*sk) <= -stepsize*gamma*norm(g(alpha*xk))**2:
                 stepsize = beta**exponent
                 exponent = exponent+1
-            alfa=alfa-stepsize*g(alfa*xk)
+            alpha=alpha-stepsize*g(alpha*xk)
         # check if really min or just stationary point  
-        if (g((alfa+0.5e-5)*xk)-g((alfa-0.5e-5)*xk))/1e-5 <= 0:
-            #what should be done here?    
-            warnings.warn("Stupid case steepest descent")
-        return alfa
+        if (g(xk+(alpha+0.5e-5)*sk)-g(xk+(alpha-0.5e-5)*sk))/1e-5 <= 0:
+            warnings.warn("lineSearchExactSteepestDesent: The found stationary point alpha might not be a real minimum of the stepsize.")
+        return alpha
         
-    def lineSearchExactNewton(self,x,s,alpha0=1):
+    def lineSearchExactNewton(self,x,sk,alpha0=1):
         """
-        This function just needs the parameter x,alpha0 and s.
+        Method to do linesearch by classical Newton method.
+        This function just needs the parameter x, alpha0 and s.
         The rest of the parameters are not used in this function!
-        :return:
+        Default initial guess for alpha is 1.
+        :return: returns alpha
         """        
         # Newton Method
-        # a starting alpha is needed, maybe take 1?
         def fAlpha(alpha):
-            return self.optProb.f(x+alpha*s)
+            return self.optProb.f(x+alpha*sk)
         def gAlpha(alpha):
-            return self.optProb.g(x+alpha*s)*s
+            return self.optProb.g(x+alpha*sk)*sk
         optProbAlpha=OptimizationProblem(fAlpha,gAlpha)
-        #fAlfa function and gradient must be put in; no line search, finite difference approx of H
+        #fAlpha function and gradient must be put in; no line search, finite difference approx of H
         CN = QuasiNewton(optProbAlpha,self.finiteDifference,True)
         return CN.solve(1.)  #choose any number
 
@@ -205,7 +208,7 @@ class OptimizationMethods:
         Does a simple central finite difference approximation of the hessian at point xk
         :return: h, symmetrized finite difference approximation of Hessian
         """
-        h = np.array([numpy.array([0*len(xk)])*len(xk)])# preallocate matrix of size len(xk)*len(xk)
+        h = np.array([numpy.array([0*len(xk)])*len(xk)]) # preallocate matrix of size len(xk)*len(xk)
         for i in range(len(xk)):
             for j in range(len(xk)):
                 h[i,j] = (self.optProb.g(xk[i]+0.5e-5)[j]-self.optProb.g(xk[i]-0.5e-5)[j])/1e-5
@@ -305,3 +308,16 @@ class OptimizationMethods:
         if True: #???
             return True
         return False
+
+   def finiteDifference(self,xk):
+        """
+        Does a simple central finite difference approximation of the hessian at point xk
+        :return: h, symmetrized finite difference approximation of Hessian
+        """
+        # preallocate matrix of size len(xk)*len(xk)
+        h = np.array([numpy.array([0*len(xk)])*len(xk)])
+        for i in range(len(xk)):
+            for j in range(len(xk)):
+                h[i,j] = (self.optProb.g(xk[i]+0.5e-5)[j]-self.optProb.g(xk[i]-0.5e-5)[j])/1e-5
+        h = 1/2*(h+h.T)
+        return h

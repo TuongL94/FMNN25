@@ -157,6 +157,34 @@ class TestOptimizationMethods(unittest.TestCase):
         d=np.array([-1,-1])
         s=self.optMeth.getSearchDirInv(g,HInv)
         assert (s==d).all()
+        
+    def testLineSearchExactSteepestDesent(self):
+        """
+        Test for the linesearch applying the steepest descent method
+        
+        """
+        # input arguments
+        self.optMeth.lineSearchExactSteepestDesent()
+        assert 
+        
+    def testLineSearchExactNewton(self):
+        """
+        Test for the linesearch applying the classical Newton method
+        
+        """
+        # input arguments
+        self.optMeth.lineSearchExactNewton()
+        assert 
+
+   def testfiniteDifference(self):
+        """
+        Test for the linesearch applying the steepest descent method
+        
+        """
+        # input arguments
+        self.optMeth.finiteDifference()
+        assert 
+
 
 
 if __name__=='__main__':

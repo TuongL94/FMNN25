@@ -205,7 +205,8 @@ class OptimizationMethods:
         Does a simple central finite difference approximation of the hessian at point xk
         :return: h, symmetrized finite difference approximation of Hessian
         """
-        h = np.array([numpy.array([0*len(xk)])*len(xk)])# preallocate matrix of size len(xk)*len(xk)
+        # preallocate matrix of size len(xk)*len(xk)
+        h = np.array([numpy.array([0*len(xk)])*len(xk)])
         for i in range(len(xk)):
             for j in range(len(xk)):
                 h[i,j] = (self.optProb.g(xk[i]+0.5e-5)[j]-self.optProb.g(xk[i]-0.5e-5)[j])/1e-5
