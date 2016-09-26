@@ -5,21 +5,22 @@ Created on Wed Sep 21 14:23:09 2016
 """
 from  scipy import *
 from  pylab import *
+import numpy as np
 
 class OptimizationProblem:
     '''
     class for representing an optimization problem
     '''
-    def __init__(f,g=[]):
+    def __init__(self,f,g=[]):
         '''
         initialize the function f and its derivative g
         if the derivative is not given g is set to the approximation of g
         '''
-        _f=f;
+        self._f=f;
         if g==[]:
-            _g=__approxG__
+            self._g=self.__approxG__
         else:            
-            _g=g
+            self._g=g
         
     
     def getF(self):
@@ -27,7 +28,7 @@ class OptimizationProblem:
         get-function of the function f
         '''
         return self._f
-    def setF(self):
+    def setF(self,f):
         '''
         set-function of the function f (not allowed to use)
         '''
@@ -39,14 +40,17 @@ class OptimizationProblem:
         get-function of the gradient g
         '''
         return self._g
-    def setG(self):
+    def setG(self,g):
         '''
         set-function of the gradient g (not allowed to use)
         '''
         raise Exception('You are not allowed to change the value of the gradient g');
     g=property(getG,setG)
     
-    def __approxG__():
+    def __approxG__(self,x):
         '''
         calculate an approximation of the gradient out of the function f
-        '''    
+        (central difference)
+        '''
+        return np.array([(self.f(x[i]+0.5e-5)-self.f(x[i]-0.5e-5))/1e-5\
+        for i in range(len(x))])
