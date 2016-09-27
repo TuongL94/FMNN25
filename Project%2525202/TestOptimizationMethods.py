@@ -175,6 +175,25 @@ class TestOptimizationMethods(unittest.TestCase):
         # input arguments
         self.optMeth.lineSearchExactNewton()
         assert 
+       
+        def testBroyden(self):
+        '''
+        Tests if goodBroyden and badBroyden gives approximately the same result
+        for a arbitrary vector x0
+        '''
+        x0=np.array([1,2,3])
+        H=self.optMeth.finiteDifference(x0)
+        if optProb.g(x0)<tol:
+            if super().isPosDef()==False: #Hessian is not positive definite - Error message? only stationary point found?
+                warnings.warn("Matrix at the result is not positive definite")
+            return (x,f(x))
+        sk=super().getSearchDirHessian(self.optProb.g(x0),H)
+        alfa=self.linesearch(x0,sk)
+        xk=x0+alfa*sk
+        
+        H1=self.optMeth.goodBroyden(xk,x0,self.optProb.g(xk),self.optProb.g(x0),H)
+        H2=self.optMeth.badBroyden(xk,x0,self.optProb.g(xk),self.optProb.g(x0),H)
+        self.assertAlmostEqual(H1,H2)
 
    def testfiniteDifference(self):
         """
@@ -184,6 +203,8 @@ class TestOptimizationMethods(unittest.TestCase):
         # input arguments
         self.optMeth.finiteDifference()
         assert 
+        
+      
 
 
 
