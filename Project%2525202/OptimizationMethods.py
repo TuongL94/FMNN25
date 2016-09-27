@@ -165,6 +165,7 @@ class OptimizationMethods:
         objective function is evaluated. The variables g1 and g0 are the corresponding
         gradients. H0 is the previous inverse Hessian.
         The input variables have to be row vectors.
+        :return: the updated inverse Hessian
         '''
         #Optionally the gradient is calculated inside i.e. g1=gradient(f(x1))
         delta=x1-x0
@@ -182,6 +183,7 @@ class OptimizationMethods:
         objective function is evaluated. The variables g1 and g0 are the corresponding
         gradients. H0 is the previous inverse Hessian.
         The input variables have to be row vectors.
+        :return: the updated inverse Hessian
         '''
         #Optionally the gradient is calculated inside i.e. g1=gradient(f(x1))    
         delta=x1-x0
