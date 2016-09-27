@@ -52,5 +52,5 @@ class OptimizationProblem:
         calculate an approximation of the gradient out of the function f
         (central difference)
         '''
-        return np.array([(self.f(x[i]+0.5e-5)-self.f(x[i]-0.5e-5))/1e-5\
+        return np.array([(self.f(x+0.5e-5*np.eye(1,len(x),i)[0])-self.f(x-0.5e-5*np.eye(1,len(x),i)[0]))/1e-5\
         for i in range(len(x))])
