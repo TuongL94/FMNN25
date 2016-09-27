@@ -39,7 +39,7 @@ class OptimizationMethods:
 #            if (g(xk+(alpha+0.5e-5)*sk)-g(xk+(alpha-0.5e-5)*sk))/1e-5 <= 0:
 #                #what should be done here?
 #        return alpha
-    def lineSearchExactSteepestDesent(self,xk,sk,alpha=1,beta=.5,gamma=1e-2):
+    def lineSearchExactSteepestDesent(self,xk,sk,alpha=1,beta=.5,gamma=1e-2,tol=1e-5):
         """
         Method to calculate the stepsize in a Quasi-Newton method by the
         steepest descent algorithm.
@@ -48,21 +48,27 @@ class OptimizationMethods:
         The rest of the parameters is not changed!
         :return: alpha
         """
+        # define optimization problem for fAlpha
+        def fAlpha(alpha):
+            return self.optProb.f(xk+alpha*sk)
+        def gAlpha(alpha):
+            return self.optProb.g(xk+alpha*sk)*sk
         # Steepest descent method
-        while g(xk+alpha*sk) > tol:
+        while gAlpha(alpha) > tol:
             # stepsize calculated by Armijo's method              
             exponent = 1
             stepsize = 1
-            while f(xk+alpha*sk-stepsize*g(xk+alpha*sk))-f(xk+alpha*sk) <= -stepsize*gamma*norm(g(alpha*xk))**2:
+            while fAlpha(alpha-stepsize*gAlpha(alpha))-fAlpha(alpha) <= \
+                  -stepsize*gamma*norm(gAlpha(alpha))**2:
                 stepsize = beta**exponent
                 exponent = exponent+1
-            alpha=alpha-stepsize*g(alpha*xk)
+            alpha=alpha-stepsize*gAlpha(alpha)
         # check if really min or just stationary point  
-        if (g(xk+(alpha+0.5e-5)*sk)-g(xk+(alpha-0.5e-5)*sk))/1e-5 <= 0:
+        if (gAlpha(alpha+0.5e-5)-gAlpha(alpha-0.5e-5))/1e-5 <= 0:
             warnings.warn("lineSearchExactSteepestDesent: The found stationary point alpha might not be a real minimum of the stepsize.")
         return alpha
         
-    def lineSearchExactNewton(self,x,sk,alpha0=1):
+    def lineSearchExactNewton(self,xk,sk,alpha0=1):
         """
         Method to do linesearch by classical Newton method.
         This function just needs the parameter x, alpha0 and s.
@@ -72,9 +78,9 @@ class OptimizationMethods:
         """        
         # Newton Method
         def fAlpha(alpha):
-            return self.optProb.f(x+alpha*sk)
+            return self.optProb.f(xk+alpha*sk)
         def gAlpha(alpha):
-            return self.optProb.g(x+alpha*sk)*sk
+            return self.optProb.g(xk+alpha*sk)*sk
         optProbAlpha=OptimizationProblem(fAlpha,gAlpha)
         #fAlpha function and gradient must be put in; no line search, finite difference approx of H
         CN = QuasiNewton(optProbAlpha,self.finiteDifference,True)
@@ -205,17 +211,20 @@ class OptimizationMethods:
         inherit this method in QuasiNewton.py. This method acts as a placeholder,
         DONT IMPLEMENT ANYTHING HERE!
         """
-    def finiteDifference(self,xk):
+        
+    def finiteDifference(self,g,x):
         """
         Does a simple central finite difference approximation of the hessian at point xk
         :return: h, symmetrized finite difference approximation of Hessian
         """
-        h = np.array([numpy.array([0*len(xk)])*len(xk)]) # preallocate matrix of size len(xk)*len(xk)
-        for i in range(len(xk)):
-            for j in range(len(xk)):
-                h[i,j] = (self.optProb.g(xk[i]+0.5e-5)[j]-self.optProb.g(xk[i]-0.5e-5)[j])/1e-5
+        # preallocate matrix of size len(xk)*len(xk)
+        # h = np.zeros((len(xk), len(xk)))
+        h = np.array([[(g(x+0.5e-5*np.eye(1,len(x),i)[0])[j]- \
+        g(x-0.5e-5*np.eye(1,len(x),i)[0])[j])/1e-5 for j in range(len(x))] \
+        for i in range(len(x))])
         h = 1/2*(h+h.T)
         return h
+  
 
     def lc(self,alpha0,alphaL,fAlpha0,gAlpha0,fAlphaL,gAlphaL,rho=0.1,sigma=0.7):
         """
@@ -313,15 +322,4 @@ class OptimizationMethods:
         except:
             return False
 
-   def finiteDifference(self,xk):
-        """
-        Does a simple central finite difference approximation of the hessian at point xk
-        :return: h, symmetrized finite difference approximation of Hessian
-        """
-        # preallocate matrix of size len(xk)*len(xk)
-        # h = np.zeros((len(xk), len(xk)))
-        h = np.array([[(self.optProb.g(xk+0.5e-5*np.eye(1,len(xk),i)[0])[j]- \
-        self.optProb.g(xk-0.5e-5*np.eye(1,len(xk),i)[0])[j])/1e-5 for j in range(len(xk))] \
-        for i in range(len(xk))])
-        h = 1/2*(h+h.T)
-        return h
+    
