@@ -325,8 +325,3 @@ class OptimizationMethods:
         for i in range(len(xk))])
         h = 1/2*(h+h.T)
         return h
-<<<<<<< HEAD:Project_2/OptimizationMethods.py
-    
- 
-=======
->>>>>>> a5453fd190012719d90148933fe410d6e682ae36:Project%2525202/OptimizationMethods.py
