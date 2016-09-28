@@ -3,6 +3,8 @@
 Created on Wed Sep 21 14:23:09 2016
 @authors: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
+from OptimizationProblem import OptimizationProblem
+#import QuasiNewton
 from  scipy import *
 from  pylab import *
 import numpy as np
@@ -59,8 +61,7 @@ class OptimizationMethods:
             # stepsize calculated by Armijo's method              
             exponent = 1
             stepsize = 1
-            while fAlpha(alpha-stepsize*gAlpha(alpha))-fAlpha(alpha) <= \
-                  -stepsize*gamma*norm(gAlpha(alpha))**2:
+            while fAlpha(alpha-stepsize*gAlpha(alpha))-fAlpha(alpha) > -stepsize*gamma*norm(gAlpha(alpha))**2:
                 stepsize = beta**exponent
                 exponent = exponent+1
             alpha=alpha-stepsize*gAlpha(alpha)
@@ -223,8 +224,8 @@ class OptimizationMethods:
         Does a simple central finite difference approximation of the hessian at point xk
         :return: h, symmetrized finite difference approximation of Hessian
         """
-        # preallocate matrix of size len(xk)*len(xk)
-        # h = np.zeros((len(xk), len(xk)))
+        # preallocate matrix of size len(x)*len(x)
+        # h = np.zeros((len(x), len(x)))
         h = np.array([[(self.optProb.g(x+0.5e-5*np.eye(1,len(x),i)[0])[j]- \
         self.optProb.g(x-0.5e-5*np.eye(1,len(x),i)[0])[j])/1e-5 for j in range(len(x))] \
         for i in range(len(x))])

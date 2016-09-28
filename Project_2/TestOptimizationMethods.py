@@ -15,6 +15,11 @@ def f2(x):
     return pow(dot(x,x),2)-5*dot(x,x)
 def g2(x):
     return 4*dot(x,x)*x-10*x
+def rosf(x):
+    return 100*(x[1]-x[0]**2)**2+(1-x[0])**2
+def rosg(x):
+    return 2*array([200*(x[1]-x[0]**2)*(-x[0])-(1-x[0]),100*(x[1]-x[0]**2)])    
+
 class TestOptimizationMethods(unittest.TestCase):
 
         
@@ -181,25 +186,18 @@ class TestOptimizationMethods(unittest.TestCase):
         s=self.optMeth.getSearchDirInv(g,HInv)
         assert (s==d).all()
         
-    def testLineSearchExactSteepestDesent(self):
-        """
-        Test for the linesearch applying the steepest descent method
-        
-        """
-        xk = 2
-        sk = -4
-        alpha = self.optMeth.lineSearchExactSteepestDesent(xk,sk)
-        self.assertAlmostEqual(alpha,0,places=5) 
-        
-#    def testLineSearchExactNewton(self):
+#    def testLineSearchExact(self):
 #        """
-#        Test for the linesearch applying the classical Newton method
-#        
+#        Test for the linesearch methods
+#        Compares the steepest descent solution to the one found by Newton's method        
 #        """
-#        # input arguments
-#        self.optMeth.lineSearchExactNewton()
-#        assert 
-#       
+#        xk = 2
+#        sk = -4
+#        alphaSteep = self.optMeth.lineSearchExactSteepestDesent(xk,sk)
+#        alphaNewt = self.optMeth.lineSearchExactNewton(xk,sk)
+#        self.assertAlmostEqual(alphaSteep,alphaNewt,places=5) 
+        
+#    
 #    def testBroyden(self):
 #       '''
 #        Tests if goodBroyden and badBroyden gives approximately the same result
@@ -226,8 +224,12 @@ class TestOptimizationMethods(unittest.TestCase):
         calculated for the function g (above)
         """
         xk = np.array([0,1,2])
-        H = self.optMeth.finiteDifference(g(xk),xk)
-        self.assertAlmostEqual(H, 2*eye(len(xk))) 
+        xr = np.array([1,1])
+        H1 = self.optMeth.finiteDifference(g(xk),xk)
+        H2 = self.optMeth.finiteDifference(rosg(xr),xr)
+        print(H2)
+        np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
+        np.testing.assert_allclose(H2,2*np.array([[400*xr[0]-200*(xr[1]-xr[0]**2)+1,-200*xr[0]],[-200*xr[0],100]]),0,1e-5)
         
       
 
