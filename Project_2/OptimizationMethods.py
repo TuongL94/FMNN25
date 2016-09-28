@@ -60,7 +60,7 @@ class OptimizationMethods:
             # stepsize calculated by Armijo's method              
             exponent = 1
             stepsize = 1
-            while fAlpha(alpha-stepsize*gAlpha(alpha))-fAlpha(alpha) >                  -stepsize*gamma*norm(gAlpha(alpha))**2:
+            while fAlpha(alpha-stepsize*gAlpha(alpha))-fAlpha(alpha) > -stepsize*gamma*norm(gAlpha(alpha))**2:
                 stepsize = beta**exponent
                 exponent = exponent+1
             alpha=alpha-stepsize*gAlpha(alpha)

@@ -146,11 +146,6 @@ class TestQuasiNewton(unittest.TestCase):
         self.assertAlmostEqual(fval,0)
         np.testing.assert_allclose(solution,np.array([1,1]),0,1e-5)
         #print(solution)
-
-    def testInexLineOnRosenbrock(self):
-        """
-        Tests the Inexact linesearch as a normal optimizer on the Rosenbrock function
-        """
         
         
     def testChebyquad(self):
