@@ -34,7 +34,6 @@ class QuasiNewton(OptimizationMethods):
             is initializing the values with the settings of the type
         initialize the function with an instance of the OptimizationProblem
         class
-        what about the other parameter? do we leave them here or not?
         """
         self.optProb=optProb
         if isHessian==None:
@@ -58,15 +57,10 @@ class QuasiNewton(OptimizationMethods):
             else:
                 self.lc=super().lcGoldstein
                 self.rc=super().rcGoldstein
-
-        
-        
-      #if self._linesearch=exact
-          #linesearch()=exactlinesearch()
         
     def solve(self,x0,tol=1e-5,kmax=100):
         #H=... #Initial value))
-        # first step always done with dinite difference approximation of Hessian,
+        # first step always done with finite difference approximation of Hessian,
         # because for update methods, two initial x-values are needed
         # put it into an array (if it's not already)
         
