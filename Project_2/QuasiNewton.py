@@ -21,6 +21,7 @@ class MethodType:
     CLASSICALNEWTON='Classical Newton'
     BFGS='BFGS'
     DFP='DFP'
+    ClassicalNewtonExactLineSteepest = "Classical Newton Exact Steepest"
 
 class QuasiNewton(OptimizationMethods):
     """
@@ -40,7 +41,8 @@ class QuasiNewton(OptimizationMethods):
             methodInfo={\
                 MethodType.BFGS: (super().bfgs,False,super().lineSearchExactNewton),\
                 MethodType.DFP: (super().dfp,False,super().lineSearchExactNewton),\
-                MethodType.CLASSICALNEWTON: (super().finiteDifference,True)}
+                MethodType.CLASSICALNEWTON: (super().finiteDifference,True)},\
+                MethodType.ClassicalNewtonExactLineSteepest: (super().finiteDifference,True,super().lineSearchExactSteepestDesent)       
             self.__init__(optProb,*methodInfo[updateH])
         else:
             self.updateHessian=updateH
