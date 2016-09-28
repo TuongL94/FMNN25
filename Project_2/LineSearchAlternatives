@@ -1,5 +1,4 @@
-# several line search methods possible
-        # for example again a Newton Method, Bisection, Steepest descent
+# several line search methods possible that we tried to implement, for example again a Newton Method, Bisection
         
         # Bisection - discard it because it is really hard to get a good initial guess
         # and it is slow
