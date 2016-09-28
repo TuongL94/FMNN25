@@ -1,7 +1,6 @@
 import unittest
 from OptimizationProblem import OptimizationProblem
-from OptimizationMethods import OptimizationMethods
-from QuasiNewton import QuasiNewton,MethodType
+from QuasiNewton import QuasiNewton, MethodType
 from scipy import *
 import numpy as np
 
@@ -24,6 +23,8 @@ class TestQuasiNewton(unittest.TestCase):
         self.classicalNewton=QuasiNewton(self.optProb,MethodType.CLASSICALNEWTON)
         self.optProb2=OptimizationProblem(f2,g2)
         self.optProbWithoutG2=OptimizationProblem(f2)
+        self.optBfgs=QuasiNewton(self.optProb,MethodType.BFGS)
+        self.optDfp=QuasiNewton(self.optProb,MethodType.DFP)
         self.optclassNew2=QuasiNewton(self.optProb2,MethodType.CLASSICALNEWTON)
         self.optBfgs2=QuasiNewton(self.optProb2,MethodType.BFGS)
         self.optDfp2=QuasiNewton(self.optProb2,MethodType.DFP)
@@ -48,29 +49,39 @@ class TestQuasiNewton(unittest.TestCase):
         x0=0
         #test with solution
         (sol,fval,k)=self.classicalNewton.solve(x0,tol,kmax)
-        print(sol)
         self.assertAlmostEqual(sol,x0,tol)
         assert k==0
         #test with "near value"
         x0=10
         (sol,fval,k)=self.classicalNewton.solve(x0,tol,kmax)
-        print(sol)
-        print(k)
+        #(sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
+        #print (sol2,fval2,k2)
+        print('-')
+        #(sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
+        #print (sol3,fval3,k3)
+        print('-')
+        #print (sol,sol2,sol3)
         #print(np.linalg.norm(np.array([0])-sol))
         assert np.linalg.norm(np.array([0])-sol)<tol
-        print(k)
         assert k==1
         #test with "near value"
         x0=np.array([1000,10,-1112])
         (sol,fval,k)=self.classicalNewton.solve(x0,tol,kmax)
-        print(sol)
         #print(np.linalg.norm(np.array([0])-sol))
         assert np.linalg.norm(np.array([0,0,0])-sol)<tol
         assert k<=2
-        #(sol1,fval1,k1)=self.optclassNew2.solve(x0,tol,kmax)
-        #(sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
-        #(sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
+        kmax=5
+        (sol1,fval1,k1)=self.optclassNew2.solve(x0,tol,kmax)
+        #print (sol1,fval1,k1)
+        print('-')
+        (sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
+        print (sol2,fval2,k2)
+        print('-')
+        (sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
+        print (sol3,fval3,k3)
+        print('-')
         #assert sol1==sol2==sol3
 
 if __name__=='__main__':
     unittest.main()
+    

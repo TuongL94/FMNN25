@@ -1,7 +1,7 @@
 import unittest
 from OptimizationProblem import OptimizationProblem
+from QuasiNewton import QuasiNewton, MethodType
 from OptimizationMethods import OptimizationMethods
-from QuasiNewton import QuasiNewton,MethodType
 from scipy import *
 import numpy as np
 
@@ -18,7 +18,7 @@ def g2(x):
 def rosf(x):
     return 100*(x[1]-x[0]**2)**2+(1-x[0])**2
 def rosg(x):
-    return 2*array([200*(x[1]-x[0]**2)*(-x[0])-(1-x[0]),100*(x[1]-x[0]**2)])    
+    return 2*np.array([200*(x[1]-x[0]**2)*(-x[0])-(1-x[0]),100*(x[1]-x[0]**2)])    
 
 class TestOptimizationMethods(unittest.TestCase):
 
@@ -33,6 +33,8 @@ class TestOptimizationMethods(unittest.TestCase):
         self.optProb2=OptimizationProblem(f2,g2)
         self.optProbWithoutG2=OptimizationProblem(f2)
         self.optMeth2=QuasiNewton(self.optProb2,MethodType.CLASSICALNEWTON)
+        self.optProbRos=OptimizationProblem(rosf,rosg)
+        self.optMeth=QuasiNewton(self.optProbRos,MethodType.CLASSICALNEWTON)
 
     def testLineSearchInexact(self):
         """
@@ -223,12 +225,20 @@ class TestOptimizationMethods(unittest.TestCase):
         Test for the finite differnce approximation of the Hessian
         calculated for the function g (above)
         """
-        xk = np.array([0,1,2])
+        #xk = np.array([0,1,2])
         xr = np.array([1,1])
-        H1 = self.optMeth.finiteDifference(g(xk),xk)
-        H2 = self.optMeth.finiteDifference(rosg(xr),xr)
+        #H1 = self.optMeth.finiteDifference(xk)
+        H2 = self.optMeth.finiteDifference(xr)
+        
+        print('-')
+        print('-')
+        print('-')
         print(H2)
-        np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
+        #print(H1)
+        print('-')
+        print('-')
+        print('-')
+        #np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
         np.testing.assert_allclose(H2,2*np.array([[400*xr[0]-200*(xr[1]-xr[0]**2)+1,-200*xr[0]],[-200*xr[0],100]]),0,1e-5)
         
       
