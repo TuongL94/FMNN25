@@ -87,7 +87,7 @@ class OptimizationMethods:
         optProbAlpha=OptimizationProblem(fAlpha,gAlpha)
         #fAlpha function and gradient must be put in; no line search, finite difference approx of H
         CN = QuasiNewton(optProbAlpha,self.finiteDifference,True)
-        return CN.solve(alpha0)
+        return CN.solve(alpha0)[0] #return alpha
 
     def lineSearchInexact(self,x,s,alpha0=1,rho=0.1,sigma=0.7,tau=0.1,chi=9):
         """

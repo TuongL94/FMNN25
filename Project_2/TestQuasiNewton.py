@@ -45,7 +45,7 @@ class TestQuasiNewton(unittest.TestCase):
         Test for the solve function
         """
         tol=1e-5
-        kmax=50
+        kmax=5
         x0=0
         #test with solution
         (sol,fval,k)=self.classicalNewton.solve(x0,tol,kmax)
@@ -54,10 +54,10 @@ class TestQuasiNewton(unittest.TestCase):
         #test with "near value"
         x0=10
         (sol,fval,k)=self.classicalNewton.solve(x0,tol,kmax)
-        #(sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
+        (sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
         #print (sol2,fval2,k2)
         print('-')
-        #(sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
+        (sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
         #print (sol3,fval3,k3)
         print('-')
         #print (sol,sol2,sol3)
