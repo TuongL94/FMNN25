@@ -61,29 +61,33 @@ class QuasiNewton(OptimizationMethods):
       #if self._linesearch=exact
           #linesearch()=exactlinesearch()
         
-    def solve(self,x0,tol=10^-5,kmax=100):
+    def solve(self,x0,tol=1e-5,kmax=100):
         #H=... #Initial value))
         # first step always done with dinite difference approximation of Hessian,
         # because for update methods, two initial x-values are needed
-        H=super().finiteDifference
-        if optProb.g(x0)<tol:
-            if super().isPosDef()==False: #Hessian is not positive definite - Error message? only stationary point found?
+        if hasattr(x0, "__len__")==False:
+            x0Array=np.array([x0])
+        else:
+            x0Array=x0
+        H=super().finiteDifference(x0Array)
+        if np.linalg.norm(self.optProb.g(x0Array))<tol:
+            if super().isPosDef(H)==False: #Hessian is not positive definite - Error message? only stationary point found?
                 warnings.warn("Matrix at the result is not positive definite")
-            return (x,f(x))
-        sk=super().getSearchDirHessian(self.optProb.g(x0),H)
-        alfa=self.linesearch(x0,sk)
-        xk=xk+alfa*sk
-        xkPrev=x0
+            return (x0Array,self.optProb.f(x0Array),0)
+        sk=super().getSearchDirHessian(self.optProb.g(x0Array),H)
+        alpha=self.lineSearch(x0Array,sk)
+        xk=x0Array+alpha*sk
+        xkPrev=x0Array
         # iterational process starts
-        for k in range(kmax):
-            H=updateHessian(xk,xkPrev)
-            if optProb.g(xk)<tol:
-                if super().isPosDef()==False: #Hessian is not positive definite - Error message? only stationary point found?
+        for k in range(1,kmax):
+            H=self.updateHessian(xk,xkPrev)
+            if np.linalg.norm(self.optProb.g(xk))<tol:
+                if super().isPosDef(H)==False: #Hessian is not positive definite - Error message? only stationary point found?
                     warnings.warn("Matrix at the result is not positive definite")
-                return (x,f(x))
+                return (xk,self.optProb.f(xk),k)
             sk=self.getSearchDir(self.optProb.g(xk),H)
-            alfa=self.linesearch(xk,sk)
+            alpha=self.lineSearch(xk,sk)
             xkPrev=xk
-            xk=xk+alfa*sk
+            xk=xk+alpha*sk
         warnings.warn("Algorithm stopped because it reached the maximum number of iterations")
-        return (x,f(x))
+        return (xk,self.optProb.f(xk),kmax)

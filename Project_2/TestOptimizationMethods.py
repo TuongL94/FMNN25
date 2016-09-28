@@ -1,16 +1,20 @@
 import unittest
 from OptimizationProblem import OptimizationProblem
 from OptimizationMethods import OptimizationMethods
+from QuasiNewton import QuasiNewton,MethodType
 from scipy import *
 import numpy as np
 
-def f(self,x):
+def f(x):
     return dot(x,x)
-def g(self,x):
+def g(x):
     return 2*x
 #def h(self,x):
 #    return 2*eye(len(x))
-        
+def f2(x):
+    return pow(dot(x,x),2)-5*dot(x,x)
+def g2(x):
+    return 4*dot(x,x)*x-10*x
 class TestOptimizationMethods(unittest.TestCase):
 
         
@@ -20,13 +24,29 @@ class TestOptimizationMethods(unittest.TestCase):
         """
         self.optProb=OptimizationProblem(f,g)
         self.optProbWithoutG=OptimizationProblem(f)
-        self.optMeth=OptimizationMethods()
+        self.optMeth=QuasiNewton(self.optProb,MethodType.CLASSICALNEWTON)
+        self.optProb2=OptimizationProblem(f2,g2)
+        self.optProbWithoutG2=OptimizationProblem(f2)
+        self.optMeth2=QuasiNewton(self.optProb2,MethodType.CLASSICALNEWTON)
 
     def testLineSearchInexact(self):
         """
         Test for the function lineSearchInexact
         """
-        #Todo
+        #case 'do nothing'
+        x=np.array([-1.,-1.])
+        s=np.array([1.,1.])
+        alpha0=0.5
+        (alpha,falpha)=self.optMeth.lineSearchInexact(x,s,alpha0)
+        print(alpha)
+        self.assertAlmostEqual(alpha,0.5)
+        #case rc and lc is not fulfilled (jumping around)
+        x=np.array([0,0])
+        s=np.array([1.,0])
+        alpha0=10
+        (alpha,falpha)=self.optMeth2.lineSearchInexact(x,s,alpha0)
+        self.assertAlmostEqual(alpha,1.4875137) #calculated value
+        #one should do more testing!
     
     def testLcWolfePowell(self):
         """
@@ -185,7 +205,7 @@ class TestOptimizationMethods(unittest.TestCase):
 #        Tests if goodBroyden and badBroyden gives approximately the same result
 #        for a arbitrary vector x0
 #        '''
-#        tol=10^-5
+#        tol=1e-5
 #        x0=np.array([0,1,2])
 #        H=self.optMeth.finiteDifference(g,x0)
 #        if self.optProb.g(x0)<tol:

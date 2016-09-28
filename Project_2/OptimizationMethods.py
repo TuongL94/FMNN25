@@ -12,6 +12,7 @@ class OptimizationMethods:
     #define constants for conditions on the inexact line search (Wolfe-Powell-Parameter)
     ALPHAL=0;
     ALPHAU=math.pow(10,99);
+    optProb=None
     
     # several line search methods possible
         # for example again a Newton Method, Bisection, Steepest descent
@@ -95,10 +96,14 @@ class OptimizationMethods:
         """
         alphaU=self.ALPHAU
         alphaL=self.ALPHAL
-        fAlpha0=self.optProb.f(x+alpha0*s);
-        fAlphaL=self.optProb.f(x+alphaL*s);
-        gAlpha0=self.optProb.g(x+alpha0*s);
-        gAlphaL=self.optProb.g(x+alphaL*s);
+        if alpha0>alphaU:
+            alpha0=alphaU
+        if alpha0<alphaL:
+            alpha0=aplphaL
+        fAlpha0=self.optProb.f(x+alpha0*s)
+        fAlphaL=self.optProb.f(x+alphaL*s)
+        gAlpha0=np.dot(self.optProb.g(x+alpha0*s),s)
+        gAlphaL=np.dot(self.optProb.g(x+alphaL*s),s)
         boolLC=self.lc(alpha0,alphaL,fAlpha0,gAlpha0,fAlphaL,gAlphaL,rho,sigma)
         boolRC=self.rc(alpha0,alphaL,fAlpha0,gAlpha0,fAlphaL,gAlphaL,rho)
         while (boolLC and boolRC)==False:
@@ -108,19 +113,20 @@ class OptimizationMethods:
                 #do interpolation (book Antoniou - formula 4.57)
                 denom=2*(fAlphaL-fAlpha0+(alpha0-alphaL)*gAlphaL)
                 alpha0Temp=math.pow(alpha0-alphaL,2)*gAlphaL/denom
-                alpha0Temp=max([alpha0Temp,alphaL+tau(alphaU-alphaL)])
-                alpha0=min([alpha0Temp,alphaU-tau(alphaU-alphaL)])
+                alpha0Temp=max([alpha0Temp,alphaL+tau*(alphaU-alphaL)])
+                alpha0=min([alpha0Temp,alphaU-tau*(alphaU-alphaL)])
             else:
                 #case !boolLC==True (block 1)
                 #do extrapolationpolation (book Antoniou - formula 4.58)
                 alpha0Temp=(alpha0-alphaL)*gAlpha0/(gAlphaL-gAlpha0)
-                alpha0Temp=max([alpha0Temp,alphaL+tau(alphaU-alphaL)])
+                alpha0Temp=max([alpha0Temp,alphaL+tau*(alpha0-alphaL)])
+                alpha0Temp=min([alpha0Temp,alphaU-chi*(alpha0-alphaL)])
                 alphaL=alpha0
-                alpha0=alpha0+min([alpha0Temp,alphaU-tau(alphaU-alphaL)])
-            fAlpha0=self.optProb.f(x+alpha0*s);
-            fAlphaL=self.optProb.f(x+alphaL*s);
-            gAlpha0=self.optProb.g(x+alpha0*s);
-            gAlphaL=self.optProb.g(x+alphaL*s);
+                alpha0=alpha0+alpha0Temp
+            fAlpha0=self.optProb.f(x+alpha0*s)
+            fAlphaL=self.optProb.f(x+alphaL*s)
+            gAlpha0=np.dot(self.optProb.g(x+alpha0*s),s)
+            gAlphaL=np.dot(self.optProb.g(x+alphaL*s),s)
             boolLC=self.lc(alpha0,alphaL,fAlpha0,gAlpha0,fAlphaL,gAlphaL,rho,sigma)
             boolRC=self.rc(alpha0,alphaL,fAlpha0,gAlpha0,fAlphaL,gAlphaL,rho)
         return (alpha0,fAlpha0)
@@ -205,22 +211,22 @@ class OptimizationMethods:
         """
         return 1
 
-    def updateHessian(self):
+    def updateHessian(self,xk,xkPrev=None):
         """
         Global method for finding the hessian or the inverse of the hessian
         inherit this method in QuasiNewton.py. This method acts as a placeholder,
         DONT IMPLEMENT ANYTHING HERE!
         """
         
-    def finiteDifference(self,g,x):
+    def finiteDifference(self,x,xkPrev=None):
         """
         Does a simple central finite difference approximation of the hessian at point xk
         :return: h, symmetrized finite difference approximation of Hessian
         """
         # preallocate matrix of size len(xk)*len(xk)
         # h = np.zeros((len(xk), len(xk)))
-        h = np.array([[(g(x+0.5e-5*np.eye(1,len(x),i)[0])[j]- \
-        g(x-0.5e-5*np.eye(1,len(x),i)[0])[j])/1e-5 for j in range(len(x))] \
+        h = np.array([[(self.optProb.g(x+0.5e-5*np.eye(1,len(x),i)[0])[j]- \
+        self.optProb.g(x-0.5e-5*np.eye(1,len(x),i)[0])[j])/1e-5 for j in range(len(x))] \
         for i in range(len(x))])
         h = 1/2*(h+h.T)
         return h
