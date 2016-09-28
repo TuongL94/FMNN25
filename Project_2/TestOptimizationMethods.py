@@ -34,7 +34,7 @@ class TestOptimizationMethods(unittest.TestCase):
         self.optProbWithoutG2=OptimizationProblem(f2)
         self.optMeth2=QuasiNewton(self.optProb2,MethodType.CLASSICALNEWTON)
         self.optProbRos=OptimizationProblem(rosf,rosg)
-        self.optMeth=QuasiNewton(self.optProbRos,MethodType.CLASSICALNEWTON)
+        self.optMethRos=QuasiNewton(self.optProbRos,MethodType.CLASSICALNEWTON)
 
     def testLineSearchInexact(self):
         """
@@ -225,20 +225,13 @@ class TestOptimizationMethods(unittest.TestCase):
         Test for the finite differnce approximation of the Hessian
         calculated for the function g (above)
         """
-        #xk = np.array([0,1,2])
+        xk = np.array([0,1,2])
         xr = np.array([1,1])
-        #H1 = self.optMeth.finiteDifference(xk)
-        H2 = self.optMeth.finiteDifference(xr)
-        
-        print('-')
-        print('-')
-        print('-')
+        H1 = self.optMeth.finiteDifference(xk)
+        H2 = self.optMethRos.finiteDifference(xr)
         print(H2)
-        #print(H1)
-        print('-')
-        print('-')
-        print('-')
-        #np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
+        print(H1)
+        np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
         np.testing.assert_allclose(H2,2*np.array([[400*xr[0]-200*(xr[1]-xr[0]**2)+1,-200*xr[0]],[-200*xr[0],100]]),0,1e-5)
         
       
