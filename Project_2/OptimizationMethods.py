@@ -54,7 +54,7 @@ class OptimizationMethods:
         def fAlpha(alpha):
             return self.optProb.f(xk+alpha*sk)
         def gAlpha(alpha):
-            return self.optProb.g(xk+alpha*sk)*sk
+            return np.dot(self.optProb.g(xk+alpha*sk),sk)
         # Steepest descent method
         while gAlpha(alpha) > tol:
             # stepsize calculated by Armijo's method              
