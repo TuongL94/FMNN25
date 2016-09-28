@@ -15,32 +15,7 @@ class OptimizationMethods:
     ALPHAU=math.pow(10,99);
     optProb=None
     
-    # several line search methods possible
-        # for example again a Newton Method, Bisection, Steepest descent
-        
-        # Bisection - discard it because it is really hard to get a good initial guess
-        # and it is slow
-        # actually not such a nice method because the sign-change has to be detected
-        # evalute f at different points around xk to detect sign change
-        # leftEnd = #nearest point to the left of sign change
-        # rightEnd = #nearest point to the right of sign change
-        # a starting alpha is needed, maybe take 1?
-        # have to find min of fAlpha, root of gAlpha
-#        gAlpha = g(xk+alpha*sk)
-#        alpha = (rightEnd-leftEnd)/2       
-#        while gAlpha > tol:
-#            if gAlpha == 0:
-#                return alpha
-#            elif gAlpha*f(xk+leftEnd*sk) < 0:
-#                rightEnd = alpha
-#            else :
-#                leftEnd = alpha
-#            alpha = (rightEnd-leftEnd)/2
-#            gAlpha = g(xk+alpha*sk)
-#            # it shoukd be checked if this is really a min or any other stationary point
-#            if (g(xk+(alpha+0.5e-5)*sk)-g(xk+(alpha-0.5e-5)*sk))/1e-5 <= 0:
-#                #what should be done here?
-#        return alpha
+    
     def lineSearchExactSteepestDesent(self,xk,sk,alpha=1,beta=.5,gamma=1e-2,tol=1e-5):
         """
         Method to calculate the stepsize in a Quasi-Newton method by the
@@ -69,25 +44,7 @@ class OptimizationMethods:
             warnings.warn("lineSearchExactSteepestDesent: The found stationary point alpha might not be a real minimum of the stepsize.")
         return alpha
         
-    def lineSearchExactNewton(self,xk,sk,alpha0=1):
-        """
-        Method to do linesearch by classical Newton method.
-        This function just needs the parameter x, alpha0 and s.
-        The rest of the parameters are not used in this function!
-        Default initial guess for alpha is 1.
-        :return: returns alpha
-        """        
-        # Newton Method
-        #import QuasiNewton
-        from QuasiNewton import QuasiNewton
-        def fAlpha(alpha):
-            return self.optProb.f(xk+alpha*sk)
-        def gAlpha(alpha):
-            return np.dot(self.optProb.g(xk+alpha*sk),sk)
-        optProbAlpha=OptimizationProblem(fAlpha,gAlpha)
-        #fAlpha function and gradient must be put in; no line search, finite difference approx of H
-        CN = QuasiNewton(optProbAlpha,self.finiteDifference,True)
-        return CN.solve(alpha0)[0] #return alpha
+
 
     def lineSearchInexact(self,x,s,alpha0=1,rho=0.1,sigma=0.7,tau=0.1,chi=9):
         """
