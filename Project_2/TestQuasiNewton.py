@@ -12,6 +12,10 @@ def f2(x):
     return pow(dot(x,x),2)-5*dot(x,x)
 def g2(x):
     return 4*dot(x,x)*x-10*x
+def rosf(x):
+    return 100*(x[1]-x[0]**2)**2+(1-x[0])**2
+def rosg(x):
+    return 2*np.array([200*(x[1]-x[0]**2)*(-x[0])-(1-x[0]),100*(x[1]-x[0]**2)])
 
 class TestQuasiNewton(unittest.TestCase):
     def setUp(self):
@@ -82,6 +86,15 @@ class TestQuasiNewton(unittest.TestCase):
         print('-')
         #assert sol1==sol2==sol3
 
+    def testRosenBrock(self):
+        prob = OptimizationProblem(rosf,rosg)
+        solver = QuasiNewton(prob,MethodType.ClassicalNewtonExactLineSteepest)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        print(solution)
+        
 if __name__=='__main__':
     unittest.main()
     
