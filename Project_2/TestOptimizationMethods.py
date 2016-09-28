@@ -198,10 +198,10 @@ class TestOptimizationMethods(unittest.TestCase):
         
 #    
 #    def testBroyden(self):
-#       '''
+#        """
 #        Tests if goodBroyden and badBroyden gives approximately the same result
 #        for a arbitrary vector x0
-#        '''
+#        """
 #        tol=1e-5
 #        x0=np.array([0,1,2])
 #        H=self.optMeth.finiteDifference(g,x0)
