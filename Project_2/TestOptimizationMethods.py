@@ -9,8 +9,6 @@ def f(x):
     return dot(x,x)
 def g(x):
     return 2*x
-#def h(self,x):
-#    return 2*eye(len(x))
 def f2(x):
     return pow(dot(x,x),2)-5*dot(x,x)
 def g2(x):
@@ -21,8 +19,7 @@ def rosg(x):
     return 2*np.array([200*(x[1]-x[0]**2)*(-x[0])-(1-x[0]),100*(x[1]-x[0]**2)])    
 
 class TestOptimizationMethods(unittest.TestCase):
-
-        
+ 
     def setUp(self):
         """
         Set up the optimization problem
@@ -259,7 +256,6 @@ class TestOptimizationMethods(unittest.TestCase):
         updatedH = OptimizationMethods.dfp(self,xkPlusOne,xk,gkPlusOne,gk,H0)
         realResult = H0
         np.testing.assert_array_almost_equal(updatedH,realResult,8,"The dfp update is not returning the expected result.")
-
 
 
 if __name__=='__main__':
