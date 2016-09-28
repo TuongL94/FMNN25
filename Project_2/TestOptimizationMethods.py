@@ -181,13 +181,14 @@ class TestOptimizationMethods(unittest.TestCase):
 #        assert 
 #       
 #    def testBroyden(self):
-#        """
+#       '''
 #        Tests if goodBroyden and badBroyden gives approximately the same result
 #        for a arbitrary vector x0
-#        """
-#        x0=np.array([1,2,3])
-#        H=self.optMeth.finiteDifference(x0)
-#        if optProb.g(x0)<tol:
+#        '''
+#        tol=10^-5
+#        x0=np.array([0,1,2])
+#        H=self.optMeth.finiteDifference(g,x0)
+#        if self.optProb.g(x0)<tol:
 #            if super().isPosDef()==False: #Hessian is not positive definite - Error message? only stationary point found?
 #                warnings.warn("Matrix at the result is not positive definite")
 #            return (x,f(x))
