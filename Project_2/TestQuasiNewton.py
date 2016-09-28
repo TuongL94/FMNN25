@@ -12,6 +12,10 @@ def f2(x):
     return pow(dot(x,x),2)-5*dot(x,x)
 def g2(x):
     return 4*dot(x,x)*x-10*x
+def rosf(x):
+    return 100*(x[1]-x[0]**2)**2+(1-x[0])**2
+def rosg(x):
+    return 2*np.array([200*(x[1]-x[0]**2)*(-x[0])-(1-x[0]),100*(x[1]-x[0]**2)])
 
 class TestQuasiNewton(unittest.TestCase):
     def setUp(self):
@@ -33,8 +37,8 @@ class TestQuasiNewton(unittest.TestCase):
         """
         Test the init-function
         """
-        print(self.classicalNewton.getSearchDir)
-        print(OptimizationMethods.getSearchDirHessian)
+        #print(self.classicalNewton.getSearchDir)
+        #print(OptimizationMethods.getSearchDirHessian)
         #don't know how to test it        
         #assert self.classicalNewton.getSearchDir!=self.optBfgs.getSearchDir
         #assert self.classicalNewton.lineSearch!=self.optBfgs.lineSearch
@@ -56,10 +60,10 @@ class TestQuasiNewton(unittest.TestCase):
         (sol,fval,k)=self.classicalNewton.solve(x0,tol,kmax)
         (sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
         #print (sol2,fval2,k2)
-        print('-')
+        #print('-')
         (sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
         #print (sol3,fval3,k3)
-        print('-')
+        #print('-')
         #print (sol,sol2,sol3)
         #print(np.linalg.norm(np.array([0])-sol))
         assert np.linalg.norm(np.array([0])-sol)<tol
@@ -73,15 +77,75 @@ class TestQuasiNewton(unittest.TestCase):
         kmax=5
         (sol1,fval1,k1)=self.optclassNew2.solve(x0,tol,kmax)
         #print (sol1,fval1,k1)
-        print('-')
+        #print('-')
         (sol2,fval2,k2)=self.optBfgs2.solve(x0,tol,kmax)
-        print (sol2,fval2,k2)
-        print('-')
+        #print (sol2,fval2,k2)
+        #print('-')
         (sol3,fval3,k3)=self.optDfp2.solve(x0,tol,kmax)
-        print (sol3,fval3,k3)
-        print('-')
+        #print (sol3,fval3,k3)
+        #print('-')
         #assert sol1==sol2==sol3
+        
+    def testRosenBrockClassic(self):
+        """
+        Optimzes the Rosenbrock function with the classical Newton method
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver = QuasiNewton(prob,MethodType.CLASSICALNEWTON)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval,0)
+        np.testing.assert_allclose(solution,array([1,1]),0,1e-5)
+        #print(solution)    
 
+    def testRosenBrockLineSearch(self):
+        """
+        Optimizes the Rosenbrock function with a Newton method that applies a 
+        linesearch using a steepest descent algorithm
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver = QuasiNewton(prob,MethodType.ClassicalNewtonExactLineSteepest)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval,0)
+        np.testing.assert_allclose(solution,array([1,1]),0,1e-5)
+        #print(solution)
+        
+    def testRosenBrockNewtonVsLineSearch(self):
+        """
+        Tests if the two versions of the Algorithm come to the same optimum
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver1 = QuasiNewton(prob,MethodType.CLASSICALNEWTON)
+        solver2 = QuasiNewton(prob,MethodType.ClassicalNewtonExactLineSteepest)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution1,fval1,k1) = solver1.solve(x0,tol,kmax)
+        (solution2,fval2,k2) = solver2.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval1,fval2)
+        np.testing.assert_allclose(solution1,solution2,0,1e-5)
+        #print(solution)
+        
+    def testRosenBrockLineSearchInexact(self):
+        """
+        Optimizes the Rosenbrock function with a Newton method that applies inexact 
+        linesearch
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver = QuasiNewton(prob,MethodType.ClassicalNewtonInexactLine)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval,0)
+        np.testing.assert_allclose(solution,array([1,1]),0,1e-5)
+        #print(solution)
+        
 if __name__=='__main__':
     unittest.main()
     

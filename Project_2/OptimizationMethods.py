@@ -54,7 +54,7 @@ class OptimizationMethods:
         def fAlpha(alpha):
             return self.optProb.f(xk+alpha*sk)
         def gAlpha(alpha):
-            return self.optProb.g(xk+alpha*sk)*sk
+            return np.dot(self.optProb.g(xk+alpha*sk),sk)
         # Steepest descent method
         while gAlpha(alpha) > tol:
             # stepsize calculated by Armijo's method              
@@ -231,7 +231,7 @@ class OptimizationMethods:
             self.optProb.g(x-0.5e-5*np.eye(1,len(x),i)[0])[j])/1e-5 for j in range(len(x))] \
             for i in range(len(x))])
             h = 1/2*(h+h.T)
-        # preallocate matrix of size len(xk)*len(xk) 
+        # preallocate matrix of size len(xk)*len(xk)
         # h = np.zeros((len(xk), len(xk)))
         return h
   

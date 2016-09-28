@@ -234,7 +234,31 @@ class TestOptimizationMethods(unittest.TestCase):
         np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
         np.testing.assert_allclose(H2,2*np.array([[400*xr[0]-200*(xr[1]-xr[0]**2)+1,-200*xr[0]],[-200*xr[0],100]]),0,1e-5)
         
-      
+    def testbfgs(self):
+        """
+        Tests if the bfgs update works for arbitrary inputs. The method should give an identity matrix.
+        """
+        xkPlusOne = transpose(2*np.array([1.0,1.0,1.0]))
+        xk = transpose(np.array([1.0,1.0,1.0]))
+        gkPlusOne = xkPlusOne
+        gk = xk
+        H0 =  np.array([[1.0,0.0,0.0],[0.0,1.0,0.0],[0.0,0.0,1.0]])
+        updatedH = OptimizationMethods.bfgs(self,xkPlusOne,xk,gkPlusOne,gk,H0)
+        realResult = H0
+        np.testing.assert_array_almost_equal(updatedH,realResult,8,"The bfgs update is not returning the expected result.")
+
+    def testdfp(self):
+        """
+        Tests if the bfd update works for a specific input.  The method should give an identity matrix.
+        """
+        xkPlusOne = transpose(2*np.array([1.0,1.0,1.0]))
+        xk = transpose(np.array([1.0,1.0,1.0]))
+        gkPlusOne = xkPlusOne
+        gk = xk
+        H0 =  np.array([[1.0,0.0,0.0],[0.0,1.0,0.0],[0.0,0.0,1.0]])
+        updatedH = OptimizationMethods.dfp(self,xkPlusOne,xk,gkPlusOne,gk,H0)
+        realResult = H0
+        np.testing.assert_array_almost_equal(updatedH,realResult,8,"The dfp update is not returning the expected result.")
 
 
 
