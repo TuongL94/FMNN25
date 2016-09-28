@@ -41,14 +41,14 @@ class TestOptimizationMethods(unittest.TestCase):
         x=np.array([-1.,-1.])
         s=np.array([1.,1.])
         alpha0=0.5
-        (alpha,falpha)=self.optMeth.lineSearchInexact(x,s,alpha0)
+        alpha=self.optMeth.lineSearchInexact(x,s,alpha0)
         print(alpha)
         self.assertAlmostEqual(alpha,0.5)
         #case rc and lc is not fulfilled (jumping around)
         x=np.array([0,0])
         s=np.array([1.,0])
         alpha0=10
-        (alpha,falpha)=self.optMeth2.lineSearchInexact(x,s,alpha0)
+        alpha=self.optMeth2.lineSearchInexact(x,s,alpha0)
         self.assertAlmostEqual(alpha,1.4875137) #calculated value
         #one should do more testing!
     
@@ -198,10 +198,10 @@ class TestOptimizationMethods(unittest.TestCase):
         
 #    
 #    def testBroyden(self):
-#        """
+#       '''
 #        Tests if goodBroyden and badBroyden gives approximately the same result
 #        for a arbitrary vector x0
-#        """
+#        '''
 #        tol=1e-5
 #        x0=np.array([0,1,2])
 #        H=self.optMeth.finiteDifference(g,x0)

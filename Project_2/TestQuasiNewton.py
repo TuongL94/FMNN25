@@ -1,7 +1,8 @@
 import unittest
 from OptimizationProblem import OptimizationProblem
 from QuasiNewton import QuasiNewton, MethodType
-from scipy import *
+import scipy as sp
+from chebyquad_problem import *
 import numpy as np
 
 def f(x):
@@ -95,6 +96,38 @@ class TestQuasiNewton(unittest.TestCase):
         (solution,fval,k) = solver.solve(x0,tol,kmax)
         print(solution)
         
+    def testChebyquad(self):
+        #testing the chebyshev polynomial
+        x4=np.array([0]*4)
+        optProb=OptimizationProblem(chebyquad_fcn,gradchebyquad)
+        newtonLinesearchSteepest=QuasiNewton(optProb,MethodType.ClassicalNewtonExactLineSteepest)
+        bfgs=QuasiNewton(optProb,MethodType.ClassicalNewtonExactLineSteepest)
+        x8=np.array([0]*8)
+        x11=np.array([0]*11)
+        #calculate with exact linesearch
+        newton4=newtonLinesearchSteepest.solve(x4)[0]
+        newton8=newtonLinesearchSteepest.solve(x8)[0]
+        newton11=newtonLinesearchSteepest.solve(x11)[0]
+        #calculate with provided bfgs
+        scipy4=sp.optimize.fmin_bfgs(chebyquad,x4)
+        scipy8=sp.optimize.fmin_bfgs(chebyquad,x8)
+        scipy11=sp.optimize.fmin_bfgs(chebyquad,x11)
+        #calculate with our bfgs
+        bfgs4=bfgs.solve(x4)[0]
+        bfgs8=bfgs.solve(x8)[0]
+        bfgs11=bfgs.solve(x11)[0]
+        print("Cheby-Newton:")
+        print(newton4)
+        print(newton8)
+        print(newton11)
+        print("Cheby-Scipy:")
+        print(scipy4)
+        print(scipy8)
+        print(scipy11)
+        print("Cheby-BFGS:")
+        print(bfgs4)
+        print(bfgs8)
+        print(bfgs11)
 if __name__=='__main__':
     unittest.main()
     
