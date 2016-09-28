@@ -87,14 +87,65 @@ class TestQuasiNewton(unittest.TestCase):
         print('-')
         #assert sol1==sol2==sol3
 
-    def testRosenBrock(self):
+    def testRosenBrockClassic(self):
+        """
+        Optimzes the Rosenbrock function with the classical Newton method
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver = QuasiNewton(prob,MethodType.CLASSICALNEWTON)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval,0)
+        np.testing.assert_allclose(solution,array([1,1]),0,1e-5)
+        #print(solution)    
+
+    def testRosenBrockLineSearch(self):
+        """
+        Optimizes the Rosenbrock function with a Newton method that applies a 
+        linesearch using a steepest descent algorithm
+        """
         prob = OptimizationProblem(rosf,rosg)
         solver = QuasiNewton(prob,MethodType.ClassicalNewtonExactLineSteepest)
         tol=1e-5
         kmax=50
         x0 = transpose(np.array([0.0,0.0]))
         (solution,fval,k) = solver.solve(x0,tol,kmax)
-        print(solution)
+        self.assertAlmostEqual(fval,0)
+        np.testing.assert_allclose(solution,array([1,1]),0,1e-5)
+        #print(solution)
+        
+    def testRosenBrockNewtonVsLineSearch(self):
+        """
+        Tests if the two versions of the Algorithm come to the same optimum
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver1 = QuasiNewton(prob,MethodType.CLASSICALNEWTON)
+        solver2 = QuasiNewton(prob,MethodType.ClassicalNewtonExactLineSteepest)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution1,fval1,k1) = solver1.solve(x0,tol,kmax)
+        (solution2,fval2,k2) = solver2.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval1,fval2)
+        np.testing.assert_allclose(solution1,solution2,0,1e-5)
+        #print(solution)
+        
+    def testRosenBrockLineSearchInexact(self):
+        """
+        Optimizes the Rosenbrock function with a Newton method that applies inexact 
+        linesearch
+        """
+        prob = OptimizationProblem(rosf,rosg)
+        solver = QuasiNewton(prob,MethodType.ClassicalNewtonInexactLine)
+        tol=1e-5
+        kmax=50
+        x0 = transpose(np.array([0.0,0.0]))
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        self.assertAlmostEqual(fval,0)
+        np.testing.assert_allclose(solution,array([1,1]),0,1e-5)
+        #print(solution)
         
     def testChebyquad(self):
         #testing the chebyshev polynomial
