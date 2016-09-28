@@ -5,6 +5,7 @@ from OptimizationMethods import OptimizationMethods
 from scipy import *
 import numpy as np
 
+
 def f(x):
     return dot(x,x)
 def g(x):
@@ -222,7 +223,7 @@ class TestOptimizationMethods(unittest.TestCase):
 
     def testFiniteDifference(self):
         """
-        Test for the finite differnce approximation of the Hessian
+        Test for the finite difference approximation of the Hessian
         calculated for the function g (above)
         """
         xk = np.array([0,1,2])
@@ -233,7 +234,7 @@ class TestOptimizationMethods(unittest.TestCase):
         print(H1)
         np.testing.assert_allclose(H1, 2*eye(len(xk)),0,1e-5)
         np.testing.assert_allclose(H2,2*np.array([[400*xr[0]-200*(xr[1]-xr[0]**2)+1,-200*xr[0]],[-200*xr[0],100]]),0,1e-5)
-        
+
     def testbfgs(self):
         """
         Tests if the bfgs update works for arbitrary inputs. The method should give an identity matrix.
@@ -259,8 +260,6 @@ class TestOptimizationMethods(unittest.TestCase):
         updatedH = OptimizationMethods.dfp(self,xkPlusOne,xk,gkPlusOne,gk,H0)
         realResult = H0
         np.testing.assert_array_almost_equal(updatedH,realResult,8,"The dfp update is not returning the expected result.")
-
-
 
 if __name__=='__main__':
     unittest.main()

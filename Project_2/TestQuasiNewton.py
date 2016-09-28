@@ -1,6 +1,7 @@
 import unittest
 from OptimizationProblem import OptimizationProblem
 from QuasiNewton import QuasiNewton, MethodType
+from OptimizationMethods import OptimizationMethods
 from scipy import *
 import numpy as np
 
@@ -12,6 +13,11 @@ def f2(x):
     return pow(dot(x,x),2)-5*dot(x,x)
 def g2(x):
     return 4*dot(x,x)*x-10*x
+def rosenBrock(x1,x2):
+    return 100*pow((x2-pow(x1,2)),2) + pow(1-x1,2)
+def rosenBrockDeriv(x1,x2):
+    return np.array([-400*x1*(x2-pow(x1,2))+2*(1-x1),200*(x2-pow(x1,2))])
+
 
 class TestQuasiNewton(unittest.TestCase):
     def setUp(self):
@@ -82,6 +88,15 @@ class TestQuasiNewton(unittest.TestCase):
         print('-')
         #assert sol1==sol2==sol3
 
+    def testRosenBrock(self):
+        prob = OptimizationProblem(rosenBrock,rosenBrockDeriv)
+        solver = QuasiNewton(prob,MethodType.ClassicalNewtonExactLineSearch)
+        tol=1e-5
+        kmax=50
+        x0 = np.array([0,0])
+        (solution,fval,k) = solver.solve(x0,tol,kmax)
+        print(solution)
+
 if __name__=='__main__':
     unittest.main()
-    
+

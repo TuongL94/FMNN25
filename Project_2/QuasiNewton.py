@@ -21,10 +21,11 @@ class MethodType:
     CLASSICALNEWTON='Classical Newton'
     BFGS='BFGS'
     DFP='DFP'
+    ClassicalNewtonExactLineSearch = 'Classical Newton Exact Linesearch'
 
 class QuasiNewton(OptimizationMethods):
     """
-    Class representing diffenrent versions of Quasi-Newton methods
+    Class representing different versions of Quasi-Newton methods
     """
     def __init__(self,optProb,updateH,isHessian=None,linesearch=None,isWolfePowell=True):
         """
@@ -40,7 +41,9 @@ class QuasiNewton(OptimizationMethods):
             methodInfo={\
                 MethodType.BFGS: (super().bfgs,False,super().lineSearchExactNewton),\
                 MethodType.DFP: (super().dfp,False,super().lineSearchExactNewton),\
-                MethodType.CLASSICALNEWTON: (super().finiteDifference,True)}
+                MethodType.CLASSICALNEWTON: (super().finiteDifference,True) ,\
+                MethodType.ClassicalNewtonExactLineSearch: (super().finiteDifference,True,super().lineSearchExactNewton)
+            }
             self.__init__(optProb,*methodInfo[updateH])
         else:
             self.updateHessian=updateH
@@ -64,7 +67,7 @@ class QuasiNewton(OptimizationMethods):
         
     def solve(self,x0,tol=1e-5,kmax=100):
         #H=... #Initial value))
-        # first step always done with dinite difference approximation of Hessian,
+        # first step always done with finite difference approximation of Hessian,
         # because for update methods, two initial x-values are needed
         # put it into an array (if it's not already)
         

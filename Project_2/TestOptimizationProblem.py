@@ -9,6 +9,7 @@ class TestOptimizationProblem(unittest.TestCase):
         return dot(x,x)
     def g(self,x):
         return 2*x
+
         
     def setUp(self):
         """
