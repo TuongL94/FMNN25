@@ -143,9 +143,9 @@ class OptimizationMethods:
         """
         deltaK = xkPlusOne - xk
         gammaK = gkPlusOne - gk
-        secondTermNominator = dot(deltaK,transpose(deltaK))
+        secondTermNominator = np.outer(deltaK,transpose(deltaK))
         secondTermDenominator = dot(transpose(deltaK),gammaK)
-        thirdTermNominator = dot(dot(hk,dot(gammaK,transpose(gammaK))),hk)
+        thirdTermNominator = dot(dot(hk,np.outer(gammaK,transpose(gammaK))),hk)
         thirdTermDenominator = dot(transpose(gammaK),dot(hk,gammaK))
         hkPlusOne = hk + secondTermNominator/secondTermDenominator - thirdTermNominator/thirdTermDenominator
         return hkPlusOne
@@ -164,9 +164,8 @@ class OptimizationMethods:
         deltaK = xkPlusOne - xk
         gammaK = gkPlusOne - gk
         secondTerm = (1+dot(dot(transpose(gammaK),hk),gammaK)/dot(transpose(deltaK),gammaK)) \
-        * dot(deltaK,transpose(deltaK))/dot(transpose(deltaK),gammaK)
-        thirdTerm = (dot(deltaK,dot(transpose(gammaK),hk)) + dot(hk,dot(gammaK,transpose(deltaK)))) \
-        / dot(transpose(deltaK),gammaK)
+        * np.outer(deltaK,transpose(deltaK))/dot(transpose(deltaK),gammaK)
+        thirdTerm = (np.outer(deltaK,(dot(transpose(gammaK),hk))) + dot(hk,np.outer(gammaK,transpose(deltaK)))) / dot(transpose(deltaK),gammaK)
         hkPlusOne = hk + secondTerm - thirdTerm
         return hkPlusOne
 
