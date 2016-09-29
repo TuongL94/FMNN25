@@ -14,33 +14,7 @@ class OptimizationMethods:
     ALPHAL=0;
     ALPHAU=math.pow(10,99);
     optProb=None
-    
-    # several line search methods possible
-        # for example again a Newton Method, Bisection, Steepest descent
-        
-        # Bisection - discard it because it is really hard to get a good initial guess
-        # and it is slow
-        # actually not such a nice method because the sign-change has to be detected
-        # evalute f at different points around xk to detect sign change
-        # leftEnd = #nearest point to the left of sign change
-        # rightEnd = #nearest point to the right of sign change
-        # a starting alpha is needed, maybe take 1?
-        # have to find min of fAlpha, root of gAlpha
-#        gAlpha = g(xk+alpha*sk)
-#        alpha = (rightEnd-leftEnd)/2       
-#        while gAlpha > tol:
-#            if gAlpha == 0:
-#                return alpha
-#            elif gAlpha*f(xk+leftEnd*sk) < 0:
-#                rightEnd = alpha
-#            else :
-#                leftEnd = alpha
-#            alpha = (rightEnd-leftEnd)/2
-#            gAlpha = g(xk+alpha*sk)
-#            # it shoukd be checked if this is really a min or any other stationary point
-#            if (g(xk+(alpha+0.5e-5)*sk)-g(xk+(alpha-0.5e-5)*sk))/1e-5 <= 0:
-#                #what should be done here?
-#        return alpha
+
     def lineSearchExactSteepestDesent(self,xk,sk,alpha=1,beta=.5,gamma=1e-2,tol=1e-5):
         """
         Method to calculate the stepsize in a Quasi-Newton method by the
@@ -143,6 +117,7 @@ class OptimizationMethods:
         :param hk: the inverse Hessian that will be updated
         :return: the updated inverse Hessian
         """
+        
         deltaK = xkPlusOne - xk
         gammaK = gkPlusOne - gk
         secondTermNominator = np.outer(deltaK,transpose(deltaK))
@@ -154,6 +129,7 @@ class OptimizationMethods:
 
     def bfgs(self,xkPlusOne,xk,gkPlusOne,gk,hk):
         """ Updates the inverse of the Hessian using the BFGS update.
+        
         :param xk: the first grid point
         :param xkPlusOne: the second grid point
         :param gk: the first gradient value
@@ -171,14 +147,14 @@ class OptimizationMethods:
         return hkPlusOne
 
     def goodBroyden(self,x1,x0,g1,g0,H0):
-        '''
+        """
         Updates the inverse of the Hessian H0 to H1 by the "Good Broyden" method. The input
         variables x1 and x0 are the current and previous vectors where the 
         objective function is evaluated. The variables g1 and g0 are the corresponding
         gradients. H0 is the previous inverse Hessian.
         The input variables have to be row vectors.
         :return: the updated inverse Hessian
-        '''
+        """
         #Optionally the gradient is calculated inside i.e. g1=gradient(f(x1))
         delta=x1-x0
         gamma=g1-g0
@@ -189,14 +165,14 @@ class OptimizationMethods:
 
 
     def badBroyden(self,x1,x0,g1,g0,H0):
-        '''
+        """
         Updates the inverse of the Hessian H0 to H1 by the "Bad Broyden" method. The input
         variables x1 and x0 are the current and previous vectors where the 
         objective function is evaluated. The variables g1 and g0 are the corresponding
         gradients. H0 is the previous inverse Hessian.
         The input variables have to be row vectors.
         :return: the updated inverse Hessian
-        '''
+        """
         #Optionally the gradient is calculated inside i.e. g1=gradient(f(x1))    
         delta=x1-x0
         gamma=g1-g0
@@ -305,7 +281,6 @@ class OptimizationMethods:
         H is the Hessian or the inverse of the Hessian (depends on the algortihm)
         """
         
-
     def getSearchDirHessian(self,g,H):
         """
         Find the corresponding search direction.
@@ -320,7 +295,6 @@ class OptimizationMethods:
         
     def getSearchDirInv(self,g,H):
         """ Global method for finding the search direction. This method acts as a placeholder,
-        DONT IMPLEMENT ANYTHING HERE!
         H is the Hessian or the inverse of the Hessian (depends on the algortihm)
         """
         return -H.dot(g)
@@ -337,5 +311,3 @@ class OptimizationMethods:
             return True
         except:
             return False
-
-    
