@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct  1 09:39:00 2016
-
 @author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 import scipy as sp
@@ -10,71 +9,33 @@ import pylab as pl
 
 class Mesh():
     """
-    class representing the mesh which discretizes the rooms in project 3
+    Class representing the mesh of nodes that constitutes a room
     """
     
-    def __init__(self,xLength,yLength,meshsize):
+    def __init__(self,nodeMatrix):
         """
-        sets up an instance of the mesh-class
+        Sets up an instance of the mesh-class
         input parameters: 
-            dimensions of the room (length in x- and y-direction): xLength, yLength
-            distance between the nodes: meshsize
+            :nodeMatrix: A matrix (array) of Nodes
         """
-        self._xLength = xLength
-        self._yLength = yLength
-        self._meshsize = meshsize
+        self._nodeMatrix=nodeMatrix
         
     
-    def getXLength(self):
-        """
-        get-function for the length of the mesh in x-direction
-        return: x-length of the mesh
-        """
-        return self._xLength
-        
-    def getYLength(self):
-        """
-        get-function for the length of the mesh in y-direction
-        return: y-length of the mesh
-        """
-        return self._yLength
-        
-    def getMeshsize(self):
-        """
-        get-function for the meshsize of the mesh 
-        return: meshsize
-        """
-        return self._meshsize
-        
-    def setXLength(self,xLength):
-        """
-        set-function for the x-length (not allowed to use)
-        """
-        raise Exception('You are not allowed to change the dimensions of the mesh!')
-        
-    def setYLength(self,yLength):
-        """
-        set-function for the y-length (not allowed to use)
-        """
-        raise Exception('You are not allowed to change the dimensions of the mesh!')
-
-    def setMeshsize(self,meshsize):
-        """
-        set-function for the meshsize (not allowed to use)
-        """
-        raise Exception('You are not allowed to change the meshsize!')
+    def getNodeMatrix(self):
+        '''
+        Get function for the nodeMatrix
+        '''
+        return self._nodeMatrix
     
-    xLength=property(getXLength,setXLength)
-    yLength=property(getYLength,setYLength)
-    meshsize=property(getMeshsize,setMeshsize)       
+    def setNodeMatrix(self,nodeMatrix):
+        '''
+        Set function for the nodeMatrix
+        '''
+        self._nodeMatrix=nodeMatrix
+    
         
-    def createNodes(self):
-        # create instances of the node-class for the given mesh?
-        # implement actual algorithm
-        """
-        return:
-        """
-        return #list of all the node-objects reated?    
+    nodeMatrix=property(getNodeMatrix,setNodeMatrix)      
+          
     
     #def solveMesh(self,...):
         # check which input arguments are missing
@@ -98,3 +59,4 @@ class Mesh():
         return: something the solveMesh function can work with
         """
         #return   
+
