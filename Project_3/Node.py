@@ -9,6 +9,14 @@ Created on Tue Oct  4 10:25:36 2016
 import scipy as sp
 import pylab as pl
 
+class NodeType():
+    '''
+    class for the names of the types
+    '''
+    INNER='inner'
+    NEUMANN='Neumann'
+    DIRICHLET='Dirichlet'
+
 class Node():
     """
     Class repesenting the nodes of the mesh created in the mesh-class
@@ -104,6 +112,14 @@ class Node():
         Set function for the temperature
         '''
         self._funcVal=funcVal
+    def setFuncAndPrevFuncVal(self,funcVal):
+        '''
+        Set function for the prev temperature to the temperature at the moment
+        furthermore set the function value for the temperature with funcVal
+        '''
+        #set actual value to previous value
+        self._prevFuncVal=self._funcVal
+        self._funcVal=funcVal
         
     def setPrevFuncVal(self,prevFuncVal):
         '''
@@ -117,6 +133,24 @@ class Node():
         '''
         self._deriv=deriv
         
+    def setBoundaryValue(self,value,nodeType):
+        '''
+        Set the boundary value for the given type (Neumann or Dirichlet)
+        '''
+        self.nodeType=nodeType
+        if nodeType==NodeType.DIRICHLET:#Dirichlet
+            self.funcVal=value
+        elif nodeType==NodeType.NEUMANN:#Neumann
+            self.deriv=value
+    def getBoundaryValue(self,nodeType):
+        '''
+        Get the boundary value for the given type (Neumann or Dirichlet)
+        '''
+        self.nodeType=nodeType
+        if nodeType==NodeType.DIRICHLET:#Dirichlet
+            return self.funcVal
+        elif nodeType==NodeType.NEUMANN:#Neumann
+            return self.deriv
 
     xCoord=property(getXCoord,setXCoord)
     yCoord=property(getYCoord,setYCoord)

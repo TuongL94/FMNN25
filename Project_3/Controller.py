@@ -1,15 +1,13 @@
-#  Before you use this file, install mpi4py on your computer
-#  anaconda users do this like that:    conda install mpi4py
-#
-#  in a command window execute then the following command
-#
-#  mpiexec -n 2 python ~/Desktop/inspect.py
-#  (replace "Desktop" by the path o this file and replace the number of
-#  processors from 2 to the number you want.)
+"""
+@author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
+"""
 
 
 from mpi4py import MPI
 from scipy import *
+from Node import NodeType,Node
+from Interface import Interface
+from Mesh import Mesh
 
 def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
     '''
@@ -17,23 +15,50 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
     stepsize=distance to the next node
     numberIter=number of iterationsteps
     omega=relaxation-parameter
+    returns a mesh with the distribution of the temperature
     '''
+    #arrRooms==array with the dimensions of the room
     arrRooms=array([[1,1],[2,1],[1,1]])
+    #arrInterfaceTypes==types of the interfaces you are using (need always contain two values!)
+    arrInterfaceTypes=array([[None,NodeType.NEUMANN],[NodeType.DIRICHLET,NodeType.DIRICHLET],[NodeType.NEUMANN,None]])
     numberRooms=len(arrRooms)
     comm=MPI.COMM_WORLD
-    rank=comm.Get_rank()
+    myRoomNumber=comm.Get_rank()
     np=comm.size
     #case to less cpu's
     if np<numberRooms:
-        #throw error?
+        #case if there are not enough cpu's to split it up in that way we are doing it
+        raise Exception('We need more CPU`s for doing the calculation!')
     #case too much cpus (just end the processes on cpu's with higher rank)
-    if rank>numberRooms:
+    if myRoomNumber>numberRooms:
         return None
-    myRoomNumber=rank
-    #do initialization of the rooms and the borders - how to initialize the
-    #interface???
-    #pseudocode
+    #do initialization of the rooms and the borders
+    
+    #do the initialization of the interfaces
+    interfaces=array([[None,None]])
+    #just initialize my interfaces
+    #rooms on the left side
+    if(myRoomNumber!=0):
+        if myRoomNumber%2!=0:
+            #odd rooms have the interface on the bottom (use floor, because you need more the edges as well!)
+            indices=array([(0,j) for j in range(math.floor(mesh.dim[0]/2),mesh.dim[0])])
+            interfaces[0]=Interface(mesh,indices)
+        else:
+            #even rooms on the top (have the whole border as an interface)
+            indices=array([(0,j) for j in range(0,mesh.dim[0])])
+            interfaces[0]=Interface(mesh,indices)
+    #rooms on the right side
+    if(myRoomNumber!=numberRooms-1):
+        if myRoomNumber%2!=0:
+            #odd rooms have the interface on the top (use round, because you need more the edges as well!)
+            indices=array([(j,0) for j in range(0,math.round(mesh.dim[0]/2))])
+            interfaces[0]=Interface(mesh,indices)
+        else:
+            #even rooms on the bottom (have the whole border as an interface)
+            indices=array([(j,0) for j in range(0,mesh.dim[0])])
+            interfaces[0]=Interface(mesh,indices)
     '''
+    pseudocode
     store previous send data
     while not solved: (count<10?)
         if myRoomNumber%2!=0: #(odd rooms)
@@ -54,35 +79,37 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
         #(odd rooms)
         if myRoomNumber%2!=0:
             #solve the system
-            mesh.solve()
+            mesh.solveAndStore()
             #send the information to the prev/next room
-            sendInterfaceInfo(myRoomNumber)
-            #do relaxation here?
+            sendInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(myRoomNumber)
-            #or do relaxation here?
+            receiveInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
+            mesh.doRelaxation(omega)
         #(even rooms)
         else:
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(myRoomNumber)
+            receiveInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
             #solve the system
-            mesh.solve()
+            mesh.solveAndStore()
             #send the information to the prev/next room
-            sendInterfaceInfo(myRoomNumber)
+            sendInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
             #do relaxation
-def sendInterfaceInfo(myRoomNumber):
+            mesh.doRelaxation(omega)
+    return mesh
+
+def sendInterfaceInfo(myRoomNumber,nodeTypes):
     '''
         send the information to the next/previous room (if they exist)
     '''
     #send information to the previous room (if there is a prev room)
     if 0<myRoomNumber:
-        sendbuffer1=interface[myRoomNumber,1].getValues()
+        sendbuffer1=interfaces[0].getValues(nodeTypes[0])
         comm.send(sendbuffer1,myRoomNumber-1,0)
     #send information to the next room (if there is a next room)
     if numberRooms>myRoomNumber+1:
-        sendbuffer2=interface[myRoomNumber,2].getValues()
-        comm.send(sendbuffer1,(myRoomNumber-1)%numberRooms,0)
-def receiveInterfaceInfo(myRoomNumber):
+        sendbuffer2=interfaces[1].getValues(nodeTypes[1])
+        comm.send(sendbuffer2,(myRoomNumber-1)%numberRooms,0)
+def receiveInterfaceInfo(myRoomNumber,nodeTypes):
     '''
         receive the information to the next/previous room (if they exist)
     '''
@@ -90,12 +117,12 @@ def receiveInterfaceInfo(myRoomNumber):
     if 0<myRoomNumber:
         status = MPI.Status()
         receiveBuffer1=comm.recv(source=(myRoomNumber-1),status=status)
-        interface[myRoomNumber,1].setValues(receiveBuffer1)
+        interfaces[0].setValues(receiveBuffer1,nodeTypes[0])
     #receive information from the next room (if there is a next room)
     if numberRooms>myRoomNumber+1:
         status = MPI.Status()
         receiveBuffer2=comm.recv(source=(myRoomNumber+1),status=status)
-        interface[myRoomNumber,2].setValues(receiveBuffer2)
+        interfaces[1].setValues(receiveBuffer2,nodeTypes[1])
 
 #run the calculation
-doCalculation();
+#doCalculation();
