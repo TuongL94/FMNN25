@@ -37,6 +37,18 @@ class Mesh():
         '''
         self._nodeMatrix=nodeMatrix
         
+    def getStepsize(self):
+        '''
+        Get function for the step size
+        '''
+        return self._stepSize
+        
+    def setStepsize(self,stepsize):
+        '''
+        Set function for the step size (not allowed)
+        '''
+        raise Exception('You are not allowed to change the step size!')
+        
     def getRoomNbr(self):
         '''
         Get function for the room number
@@ -52,7 +64,7 @@ class Mesh():
         
     nodeMatrix=property(getNodeMatrix,setNodeMatrix)      
     roomNbr=property(getRoomNbr,setRoomNbr)
-          
+    stepSize=property(getStepsize,setStepsize)
     
   
 
