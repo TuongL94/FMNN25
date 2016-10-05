@@ -22,6 +22,7 @@ class Mesh():
             dimensions of the room (length in x- and y-direction): xLength, yLength
             distance between the nodes: meshsize
         """
+        # the real mesh matrix is missing!!!
         self._xLength = xLength
         self._yLength = yLength
         self._meshsize = meshsize
@@ -86,8 +87,44 @@ class Mesh():
             for j in range(numberOfXNodes):
                 mesh[:,:] = Node(self._meshsize*i,self._meshsize*j,'inner')
         for j in range(numberOfXNodes):
-            mesh[,]
+            #mesh[,]
         return mesh
+        
+    def createLaplaceMatrixAndRhs(self):
+        """
+        sets up the matrix and right hand side appearing in the linear system
+        that is to be solved when solving the discretized Laplacian
+        return: lapA: matrix for the discretized Laplacian
+                rhs: the right hand side vector of the equation
+        """
+        # count number of Dirichlet nodes to know the size of the linear equation
+        numberOfDNodes = sum(1 for ??? in self if self.???.nodeType == "Dirichlet")
+        # banded matrix possible, for simplicity here not used
+        numberOfNodes = (self._xLength/self._meshsize+1)*(self._yLength/self._meshsize+1)
+        lapA = np.zeros([numberOfNodes-numberOfDNodes,numberOfNodes-numberOfDNodes])
+        rhs = np.zeros(numberOfNodes-numberOfDNodes)
+        for # all nodes in the list:
+            if ???.nodeType == 'inner':
+                lapA[] = -4
+                for # the four adjacent nodes
+                    if #node before .nodeType == 'Dirichlet':
+                        rhs[] = -???.funcVAl
+                    else:
+                        lapA[] = 1
+            elif ???.nodeType == 'Neumann':
+                for # the four adjacant nodes:
+                    if # index Error:
+                        lapA[] = 2
+                    elif ???.nodeType == 'Dirichlet':
+                        rhs[]== -???.funcVal
+                    else:
+                        lapA[] = 1
+            else:
+                
+            
+                    
+                
+        return (lapA, rhs)
     
     #def solveMesh(self,...):
         # check which input arguments are missing
