@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct  1 09:39:00 2016
-
 @author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 import scipy as sp
@@ -16,7 +15,7 @@ class Mesh():
     class representing the mesh which discretizes the rooms in project 3
     """
     
-    def __init__(self,stepsize, roomNbr, grid):
+    def __init__(self,grid, roomNbr, stepsize):
         """
         sets up an instance of the mesh-class
         input parameters: 
@@ -28,8 +27,8 @@ class Mesh():
         self._stepSize = stepsize
         self.roomNbr = roomNbr
         self.grid = grid
-        self.x_res = (grid.shape)[0]
-        self.y_res = (grid.shape)[1]
+        self.x_res = (grid.shape)[1]
+        self.y_res = (grid.shape)[0]
 
 
     def getXLength(self):
@@ -113,8 +112,8 @@ class Mesh():
         B = sLin.toeplitz(toeplitzRow,toeplitzRow)
         # Fills the matrix A
         for j in range(0, max(self.x_res - 2, self.y_res - 2)):
-            A[j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2) - 1] \
-            [j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2) - 1] \
+            A[j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2), \
+            j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2)] \
             = B
         A[np.arange((A.shape)[0] - min(self.x_res - 2, self.y_res - 2)), np.arange((A.shape)[0] - min(self.x_res - 2, self.y_res - 2)) + \
                 min(self.x_res - 2, self.y_res - 2)] = 1
@@ -202,17 +201,17 @@ class Mesh():
         # Updates the values of the inner nodes
         for i in range(0, self.y_res - 2):
             for j in range(0, self.x_res - 2):
-                self.grid[1 + i][1 + j].setFuncVal(newSolution[index])
+                self.grid[1 + i][1 + j].setFuncAndPrevFuncVal(newSolution[index])
                 index += 1
         # Computes the temperatures at the right boundary and stores them in the corresponding mesh nodes
         if roomNbr == 1:
             for i in range(0,self.y_res - 2):
-                self.grid[1+i][self.x_res - 1].setFuncVal(newSolution[self.x_res - 3 + i * min(self.x_res -2, self.y_res - 2)] + self._stepSize * self.grid[1+i][self.x_res - 1].getDeriv())
+                self.grid[1+i][self.x_res - 1].setFuncAndPrevFuncVal(newSolution[self.x_res - 3 + i * min(self.x_res -2, self.y_res - 2)] + self._stepSize * self.grid[1+i][self.x_res - 1].getDeriv())
         # Computes the temperatures at the left boundary and stores them in the corresponding mesh nodes
         elif roomNbr == 3:
             for i in range(0,self.y_res - 2):
-                self.grid[1+i][0].setFuncVal(newSolution[i * min(self.x_res -2, self.y_res - 2)] - self._stepSize * self.grid[1+i][0].getDeriv())
-                
+                self.grid[1+i][0].setFuncAndPrevFuncVal(newSolution[i * min(self.x_res -2, self.y_res - 2)] - self._stepSize * self.grid[1+i][0].getDeriv())
+
     def doRelaxation(self,omega):
         '''
         calculate the new values at the boundary
@@ -220,7 +219,7 @@ class Mesh():
         we store the new value onto u_{k+1}
         '''
         coeff2=1-omega #to speed up the calculation calculate this just once
-        for i in len(self.grid):
-            for j in len(self.grid[0]):
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[0])):
                 #u_{k+1}=omega*u_{k+1}+(1-omega)*u_k
                 self.grid[i,j].funcVal=omega*self.grid[i,j].funcVal+coeff2*self.grid[i,j].prevFuncVal

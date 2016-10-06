@@ -7,6 +7,8 @@ Created on Wed Oct  5 16:38:51 2016
 
 from scipy import *
 from pylab import *
+from Node import Node
+from MeshWithSolve import Mesh
 
 import pdb
 

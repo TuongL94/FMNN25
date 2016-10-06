@@ -8,7 +8,7 @@ Created on Mon Oct  3 18:01:51 2016
 from scipy import *
 from pylab import *
 from MeshWithSolve import Mesh
-from Node import Node
+from Node import Node,NodeType
 
 class Interface:
     '''
@@ -42,11 +42,13 @@ class Interface:
         values should be an array of the size of indices
         '''
         lenIndices=len(self.indices)
+        #print(lenIndices)
         if lenIndices!=len(values):
+            #return
             #if length is not the same throw an error
-            raise Exception('length of the indices and of the values must be the same!')
+            raise Exception('length of the indices and of the values must be the same!',lenIndices,len(values))
         for i in range(lenIndices):
-            self.mesh.nodeMatrix[self.indices[i]].setindicesValue(values[i],nodeType)
+            self.mesh.grid[self.indices[i]].setBoundaryValue(values[i],nodeType)
     def getValues(self,nodeType):
         '''
         get the values corresponding to the nodetype and the interface
@@ -58,7 +60,7 @@ class Interface:
         elif nodeType==NodeType.DIRICHLET:
             values=array([0]*lenIndices)
             for i in range(lenIndices):
-                values[i]=mesh.nodeMatrix[self.indices[i]].funcVal
+                values[i]=self.mesh.grid[self.indices[i]].funcVal
         return values
     
     def calcNormDer(self):
@@ -68,24 +70,28 @@ class Interface:
         '''
         lenIndices=len(self.indices)
         values=array([0]*lenIndices)
-        for i in lenIndices:
+        for i in range(lenIndices):
             #different cases (prevIndex==index of the element we use for the difference quotient)
-            if self.indices[i,0]==0:
+            if self.indices[i][0]==0:
                 #case1: row on the top
-                prevIndex=(indices[i,0]+1,indices[i,1])
-            elif self.indices[i,0]==self.mesh.x_res:
+                prevIndex=(self.indices[i][0]+1,self.indices[i][1])
+            elif self.indices[i][0]==self.mesh.y_res:
                 #case2: row on the bottom
-                prevIndex=(indices[i,0]-1,indices[i,1])
-            elif self.indices[i,1]==0:
+                prevIndex=(self.indices[i][0]-1,self.indices[i,1])
+            elif self.indices[i][1]==0:
                 #case3: column left
-                prevIndex=(indices[i,0],indices[i,1]+1)
-            elif self.indices[i,1]==self.mesh.y_res:
+                prevIndex=(self.indices[i][0],self.indices[i][1]+1)
+            elif self.indices[i][1]==self.mesh.x_res:
                 #case4: column right
-                prevIndex=(indices[i,0],indices[i,1]-1)
-            funcVal=self.mesh.nodes[indices[i]].funcVal
+                prevIndex=(self.indices[i][0],self.indices[i][1]-1)
+            funcVal=self.mesh.grid[self.indices[i]].funcVal
             #funcValPrev==value of the function at x+stepsize
-            funcValPrev=self.mesh.nodes[indices[prevIndex]]
-            values[i]=(funcVal+funcValPrev)/self.mesh.stepSize
+            funcValPrev=self.mesh.grid[prevIndex[0],prevIndex[1]].prevFuncVal
+            print('funcVal')
+            print(funcVal)
+            print('prev')
+            print(funcValPrev)
+            values[i]=(funcVal+funcValPrev)/self.mesh.meshsize
         return values
 '''
 b=rand(1,5)

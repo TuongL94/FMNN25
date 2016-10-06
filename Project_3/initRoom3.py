@@ -7,6 +7,8 @@ Created on Wed Oct  5 16:13:56 2016
 
 from scipy import *
 from pylab import *
+from Node import Node
+from MeshWithSolve import Mesh
 
 def initRoom3():
     #pdb.set_trace()
