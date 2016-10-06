@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct  1 09:39:00 2016
-
 @author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 import scipy as sp
@@ -26,10 +25,26 @@ class Mesh():
         self._xLength = ((grid.shape)[0] - 1) * stepsize
         self._yLength = ((grid.shape)[1] - 1) * stepsize
         self._stepSize = stepsize
-        self.roomNbr = roomNbr
+        self._roomNbr = roomNbr
         self.grid = grid
-        self.x_res = (grid.shape)[1]
-        self.y_res = (grid.shape)[0]
+        self.x_res = (grid.shape)[0]
+        self.y_res = (grid.shape)[1]
+        
+    def getNodeMatrix(self):
+        '''
+        Get function for the nodeMatrix
+        '''
+        return self.grid
+        
+    def getValMatrix(self):
+        '''
+        Returns a matrix with the temperature in every node
+        '''
+        valMatrix=np.zeros((self.x_res,self.y_res))
+        for i in range(self.x_res):
+            for j in range(self.y_res):
+                valMatrix[i,j]=self.grid[i,j].getFuncVal()
+        return valMatrix
 
 
     def getXLength(self):
@@ -70,10 +85,23 @@ class Mesh():
         set-function for the meshsize (not allowed to use)
         """
         raise Exception('You are not allowed to change the meshsize!')
+        
+    def getRoomNbr(self):
+        '''
+        Get function for the room number
+        '''
+        return self._roomNbr
+        
+    def setRoomNbr(self,rNbr):
+        '''
+        Set function for the room number (not allowed)
+        '''
+        self._roomNbr=rNbr
     
     xLength=property(getXLength,setXLength)
     yLength=property(getYLength,setYLength)
     meshsize=property(getStepsize,setMeshsize)
+    roomNbr=property(getRoomNbr,setRoomNbr)
     
     def solveMesh(self):
         """
