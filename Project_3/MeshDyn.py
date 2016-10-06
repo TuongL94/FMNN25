@@ -22,7 +22,7 @@ class MeshDyn():
     teaser how the class could be designed for arbitrary room contallations    
     """
     
-    def __init__(self,nodeMatrix=None,xLength=None,yLength=None,boundary=None,meshsize):
+    def __init__(self,meshsize,grid=None,xLength=None,yLength=None,boundary=None):
         """
         sets up an instance of the mesh-class
         input parameters: 
@@ -35,29 +35,30 @@ class MeshDyn():
             a is the left, b the lower, c the right and d the upper wall of the room
             distance between the nodes: meshsize
         """
-        if nodeMatrix is None:
+        if grid is None:
             #setup algorithm
             raise Exception('Algorithm missing.')
             self._xLength = xLength
             self._yLength = yLength
-            self.numberOfXNodes = self.xLength/self.meshsize+1
-            self.numberOfYNodes = self.yLength/self.meshsize+1
+            self.numberOfXNodes = round(self.xLength/self.meshsize)+1
+            self.numberOfYNodes = round(self.yLength/self.meshsize)+1
         else:
-            self.nodeMatrix = nodeMatrix
-            self.numberOfXNodes = nodeMatrix.shape[1]
-            self.numberOfYNodes = nodeMatrix.shape[0]
+            self.grid = grid
+            self.numberOfXNodes = grid.shape[1]
+            self.numberOfYNodes = grid.shape[0]
             
-        if xLength is None:
-            if nodeMatrix is None:
-                raise Exception('Give either a matrix or the parameter to set up one.')
-        else:
-            self._xLength = (nodeMatrix.shape[1]-1)*meshsize
-            self._yLength = (nodeMatrix.shape[2]-1)*meshsize
+        #if xLength is None:
+        #     if grid is None:
+        #        raise Exception('Give either a matrix or the parameter to set up one.')
+        #else:
+        self._xLength = round(grid.shape[1]-1)*meshsize
+        self._yLength = round(grid.shape[0]-1)*meshsize
         
+        self.numberOfNodes = self.numberOfXNodes*self.numberOfYNodes
         self._meshsize = meshsize
         
         # some more input parameter
-        # algo to set up the nodeMatrix
+        # algo to set up the grid
         
             # should be part of the init-function
 #    def createNodes(self):
@@ -138,7 +139,7 @@ class MeshDyn():
         self.meshsize)
         Y = np.arange(-self.meshsize, self.yLength+self.meshsize, self.meshsize)
         X, Y = np.meshgrid(X, Y)
-        Z = np.array([[self.nodeMatrix[i,j].funcVal for i in range(self.numberOfYNodes)] \
+        Z = np.array([[self.grid[i,j].funcVal for i in range(self.numberOfYNodes)] \
             for j in range(self.numberOfXNodes)])
         surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
                            linewidth=0, antialiased=False)
@@ -161,58 +162,58 @@ class MeshDyn():
         """
         # could use the fact, that lapA will be a banded matrix
         # feature for future work
-        numberOfNodes = self.numberOfXNodes*self.numberOfYNodes
+        #numberOfNodes = round(self.numberOfXNodes*self.numberOfYNodes)
         #numberOfDirNodes  = 0
         #for i in range(self.numberOfYNodes):
         #    for j in range(numberOfXNodes):
-        #        if self.nodeMatrix.nodeType == 'Dirichlet':
+        #        if self.grid.nodeType == 'Dirichlet':
         #            numberOfDirNodes = numberOfDirNodes+1                   
         #lapA = np.zeros(numberOfNodes-numberOfDirNodes,numberOfNodes-numberOfDirNodes)
-        lapA = np.zeros(numberOfNodes,numberOfNodes)
+        lapA = np.zeros([self.numberOfNodes,self.numberOfNodes])
         #rhs = np.zeros(numberOfNodes-numberOfDirNodes)
-        rhs = np.zeros(numberOfNodes)        
+        rhs = np.zeros(self.numberOfNodes)        
         counter = 0
         for i in range(self.numberOfYNodes):
             for j in range(self.numberOfXNodes):
                 # what to do when node is a Dirichlet node
-                if self.nodeMatrix[i,j].nodeType == 'Dirichlet':
+                if self.grid[i,j].nodeType == 'Dirichlet':
                     # write 1 on the corresponding diagonal position of the solvematrix
                     lapA[counter,counter] = 1
                     #write the prescribed boundary value on the corresponding position
                     # on the right hand side
-                    rhs[counter] = self.nodeMatrix[i,j].funcVal
+                    rhs[counter] = self.grid[i,j].funcVal
                     counter = counter+1
                 # what to do when node is an inner node    
-                elif self.nodeMatrix[i,j].nodeType == 'inner':
+                elif self.grid[i,j].nodeType == 'inner':
                     # write -4 on the diagonal
                     lapA[counter,counter] = -4
                     # check the 4 adjacant nodes
                     # [i-1,j]
-                    if self.nodeMatrix[i-1,j].nodeType == 'inner':
+                    if self.grid[i-1,j].nodeType == 'inner':
                         lapA[counter,counter-1] = 1     
-                    elif self.nodeMatrix[i-1,j].nodeType == 'Dirichlet':
-                        rhs[counter] = rhs[counter]-self.nodeMatrix[i-1,j].funcVal                                
+                    elif self.grid[i-1,j].nodeType == 'Dirichlet':
+                        rhs[counter] = rhs[counter]-self.grid[i-1,j].funcVal                                
                     else:
                         lapA[counter,counter-1] = 1
                     # [i+1,j]
-                    if self.nodeMatrix[i+1,j].nodeType == 'inner':
+                    if self.grid[i+1,j].nodeType == 'inner':
                         lapA[counter,counter+1] = 1     
-                    elif self.nodeMatrix[i+1,j].nodeType == 'Dirichlet':
-                        rhs[counter] = rhs[counter]-self.nodeMatrix[i+1,j].funcVal                                
+                    elif self.grid[i+1,j].nodeType == 'Dirichlet':
+                        rhs[counter] = rhs[counter]-self.grid[i+1,j].funcVal                                
                     else:
                         lapA[counter,counter+1] = 1
                     # [i,j-1]
-                    if self.nodeMatrix[i,j-1].nodeType == 'inner':
+                    if self.grid[i,j-1].nodeType == 'inner':
                         lapA[counter,counter-self.numberOfXNodes] = 1     
-                    elif self.nodeMatrix[i,j-1].nodeType == 'Dirichlet':
-                        rhs[counter] = rhs[counter]-self.nodeMatrix[i,j-1].funcVal                                 
+                    elif self.grid[i,j-1].nodeType == 'Dirichlet':
+                        rhs[counter] = rhs[counter]-self.grid[i,j-1].funcVal                                 
                     else:
                         lapA[counter,counter-self.numberOfXNodes] = 1
                     # [i,j+1]
-                    if self.nodeMatrix[i,j+1].nodeType == 'inner':
+                    if self.grid[i,j+1].nodeType == 'inner':
                         lapA[counter,counter+self.numberOfXNodes] = 1     
-                    elif self.nodeMatrix[i,j+1].nodeType == 'Dirichlet':
-                         rhs[counter] = rhs[counter]-self.nodeMatrix[i,j+1].funcVal                               
+                    elif self.grid[i,j+1].nodeType == 'Dirichlet':
+                         rhs[counter] = rhs[counter]-self.grid[i,j+1].funcVal                               
                     else:
                         lapA[counter,counter+self.numberOfXNodes] = 1
                     counter = counter+1
@@ -224,52 +225,52 @@ class MeshDyn():
                     # find the 'nonexisting' one by catching an index exception?
                     # [i-1,j]
                     try:
-                        self.nodeMatrix[i-1,j]
-                        if self.nodeMatrix[i-1,j].nodeType == 'inner':
+                        self.grid[i-1,j]
+                        if self.grid[i-1,j].nodeType == 'inner':
                             lapA[counter,counter-1] = 1                        
-                        elif self.nodeMatrix[i-1,j].nodeType == 'Dirichlet':
-                            rhs[counter] = rhs[counter]-self.nodeMatrix[i-1,j].funcVal                                
+                        elif self.grid[i-1,j].nodeType == 'Dirichlet':
+                            rhs[counter] = rhs[counter]-self.grid[i-1,j].funcVal                                
                         else:
                             lapA[counter,counter-1] = 1
                     # set derivative on right hand side
                     except IndexError:
-                        rhs[counter] = self.nodeMatrix[i-1,j].deriv
+                        rhs[counter] = self.grid[i-1,j].deriv
                     # [i+1,j]
                     try:
-                        self.nodeMatrix[i+1,j]        
-                        if self.nodeMatrix[i+1,j].nodeType == 'inner':
+                        self.grid[i+1,j]        
+                        if self.grid[i+1,j].nodeType == 'inner':
                             lapA[counter,counter+1] = 1     
-                        elif self.nodeMatrix[i+1,j].nodeType == 'Dirichlet':
-                            rhs[counter] = rhs[counter]-self.nodeMatrix[i+1,j].funcVal                                
+                        elif self.grid[i+1,j].nodeType == 'Dirichlet':
+                            rhs[counter] = rhs[counter]-self.grid[i+1,j].funcVal                                
                         else:
                             lapA[counter,counter+1] = 1
                     # set derivative on right hand side
                     except IndexError:
-                        rhs[counter] = self.nodeMatrix[i+1,j].deriv
+                        rhs[counter] = self.grid[i+1,j].deriv
                     # [i,j-1]
                     try:
-                        self.nodeMatrix[i,j-1]                    
-                        if self.nodeMatrix[i,j-1].nodeType == 'inner':
+                        self.grid[i,j-1]                    
+                        if self.grid[i,j-1].nodeType == 'inner':
                             lapA[counter,counter-self.numberOfXNodes] = 1     
-                        elif self.nodeMatrix[i,j-1].nodeType == 'Dirichlet':
-                            rhs[counter] = rhs[counter]-self.nodeMatrix[i,j-1].funcVal                                 
+                        elif self.grid[i,j-1].nodeType == 'Dirichlet':
+                            rhs[counter] = rhs[counter]-self.grid[i,j-1].funcVal                                 
                         else:
                             lapA[counter,counter-self.numberOfXNodes] = 1
                     # set derivative on right hand side
                     except IndexError:
-                        rhs[counter] = self.nodeMatrix[i,j-1].deriv
+                        rhs[counter] = self.grid[i,j-1].deriv
                     # [i,j+1]
                     try:
-                        self.nodeMatrix[i,j+1]
-                        if self.nodeMatrix[i,j+1].nodeType == 'inner':
+                        self.grid[i,j+1]
+                        if self.grid[i,j+1].nodeType == 'inner':
                             lapA[counter,counter+self.numberOfXNodes] = 1     
-                        elif self.nodeMatrix[i,j+1].nodeType == 'Dirichlet':
-                             rhs[counter] = rhs[counter]-self.nodeMatrix[i,j+1].funcVal                               
+                        elif self.grid[i,j+1].nodeType == 'Dirichlet':
+                             rhs[counter] = rhs[counter]-self.grid[i,j+1].funcVal                               
                         else:
                             lapA[counter,counter+self.numberOfXNodes] = 1
                     # set derivative on right hand side
                     except IndexError:
-                        rhs[counter] = self.nodeMatrix[i,j+1].deriv                           
+                        rhs[counter] = self.grid[i,j+1].deriv                           
                     counter = counter+1   
         return lapA, rhs
         
@@ -277,9 +278,11 @@ class MeshDyn():
     def solveMesh(self,lapA,rhs):
         """
         function solving the discretized Laplace-equation for the given mesh
+        return: matrix with the function values        
         """
         valVec = sp.linalg.solve(lapA,rhs)
-        valMat = valVec.np.reshape(self.numberOfYnodes,self.numberOfXNodes)
+        valMat = valVec.reshape(self.numberOfYNodes,self.numberOfXNodes)
         for i in range(self.numberOfYNodes):
             for j in range(self.numberOfXNodes):
-                self.nodeMatrix[i,j].funcVal = valMat[i,j]
+                self.grid[i,j].funcVal = valMat[i,j]
+        return valMat

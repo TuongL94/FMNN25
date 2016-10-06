@@ -5,7 +5,7 @@ Created on Sat Oct  1 09:39:00 2016
 """
 import scipy as sp
 import pylab as pl
-#import numpy as np
+import numpy as np
 import unittest
 from MeshWithSolve import Mesh
 from MeshDyn import MeshDyn
@@ -30,6 +30,7 @@ class TestClasses(unittest.TestCase):
         self.stepsize=1/20
         self.roomNbr=2
         self.testMesh = Mesh(self.nodeMatrix,self.roomNbr,self.stepsize)
+        self.testMeshDyn = MeshDyn(self.stepsize,self.nodeMatrix)
         self.finalTestMesh=Mesh(self.finalNodeMatrix,self.roomNbr,self.stepsize)
         self.nodeNeu = Node(1,2,'Neumann',10)
         self.nodeDir = Node(3,4,'Dirichlet',11)
@@ -54,7 +55,7 @@ class TestClasses(unittest.TestCase):
         nodeMatrix=self.testMesh.getNodeMatrix()
         roomNbr=self.testMesh.getRoomNbr()
         stepsize=self.testMesh.getStepsize()
-        self.assertTrue(array_equal(nodeMatrix,self.nodeMatrix))
+        self.assertTrue(np.array_equal(nodeMatrix,self.nodeMatrix))
         self.assertEqual(roomNbr,self.roomNbr)
         self.assertEqual(stepsize,self.stepsize)
     
@@ -70,21 +71,35 @@ class TestClasses(unittest.TestCase):
         #pdb.set_trace()
         plotWholeRoom(self.testMesh)
         plotWholeRoom(self.finalTestMesh) #Plotting the two temperature distributions in order to compare visually
+        print('--------------------------------------------')        
         self.assertTrue(np.allclose(calcValMatrix,finalValMatrix,rtol=0,atol=0.0001)) #Tolerence of 0.0001 degreee absolute difference
+        
+    def testSolveDynamic(self):
+        '''
+        the above test with the dynamic solve matrix
+        '''
+        lapA, rhs = self.testMeshDyn.setupSolveMatrixAndRhs()
+        solMat = self.testMeshDyn.solveMesh(lapA,rhs)
+        #solMat = solVec.reshape(solVec,self.testMeshDyn.numberOfYNodes,self.testMeshDyn.numberOfXNodes)
+        finalValMatrix=self.finalTestMesh.getValMatrix()
+        np.testing.assert_allclose(solMat, finalValMatrix,rtol=0,atol=1e-5)
+        
+        #calcValMatrix=self.testMesh.getValMatrix()
+        #finalValMatrix=self.finalTestMesh.getValMatrix()
+        #pdb.set_trace()
+        plotWholeRoom(self.testMeshDyn) #Plotting the two temperature distributions in order to compare visually
+        plotWholeRoom(self.finalTestMesh)
+        self.assertTrue(np.allclose(solMat,finalValMatrix,rtol=0,atol=0.0001)) #Tolerence of 0.0001 degreee absolute difference
         
     def testSolveMatrices(self):
         '''
-        Compares the different solve matrices (dynamic and static)
+        Compares the two solve matrices (dynamic and static)
         '''
-        lapA, rhs = MeshDyn.setupSolveMatrixAndRhs()
-        solVec = MeshDyn.solveMesh(lapA,rhs)
-        solMat = np.reshape(solVec,MeshDyn.numberOfYnodes,MeshDyn.numberOfXNodes)
-        finalValMatrix=self.finalTestMesh.getValMatrix()
-        np.testing.assert_allclose(solMat, finalValMatrix,rtol=0,atol=1e-5)
-        #self.testMesh.plotRoomPart()
-        #self.finalTestMesh.plotRoomPart() #Plotting the two temperature distributions in order to compare visually
-        #self.assertTrue(allclose(calcValMatrix,finalValMatrix,atol=1)) #Tolerence of 1 degreee absolute difference       
-        
+        lapA, rhs = self.testMeshDyn.setupSolveMatrixAndRhs()
+        solMat = self.testMeshDyn.solveMesh(lapA,rhs)
+        self.testMesh.solveMesh()
+        calcValMatrix=self.testMesh.getValMatrix()
+        self.assertTrue(np.allclose(solMat,calcValMatrix,rtol=0,atol=1e-13))
 
 if __name__=='__main__':
     unittest.main()        
