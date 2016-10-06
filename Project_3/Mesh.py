@@ -103,7 +103,18 @@ class Mesh():
         _funVal of the node
         return: something the solveMesh function can work with
         """
-        #return   
+        #return  
+        
+    def getValMatrix(self):
+        '''
+        Returns a matrix with the temperature in every node
+        '''
+        valMatrix=zeros(self._dim)
+        for i in len(self._dim[0]):
+            for j in len(self._dim[1]):
+                valMatrix[i,j]=self._nodeMatrix[i,j].getFuncVal()
+        return valMatrix
+    
     def solveAndStore(self):
         """
         solves and stores the solution into the nodes
