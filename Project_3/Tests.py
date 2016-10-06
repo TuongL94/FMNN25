@@ -69,7 +69,7 @@ class TestClasses(unittest.TestCase):
         #pdb.set_trace()
         plotWholeRoom(self.testMesh)
         plotWholeRoom(self.finalTestMesh) #Plotting the two temperature distributions in order to compare visually
-        self.assertTrue(np.allclose(calcValMatrix,finalValMatrix,rtol=0,atol=1)) #Tolerence of 1 degreee absolute difference
+        self.assertTrue(np.allclose(calcValMatrix,finalValMatrix,rtol=0,atol=0.0001)) #Tolerence of 0.0001 degreee absolute difference
         
         
         
