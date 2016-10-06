@@ -74,7 +74,7 @@ class Mesh():
         '''
         Set function for the dimension (not allowed)
         '''
-        raise Exception('You are not allowed to change the room number!')
+        raise Exception('You are not allowed to change the dimension!')
     
         
     nodeMatrix=property(getNodeMatrix,setNodeMatrix)      
