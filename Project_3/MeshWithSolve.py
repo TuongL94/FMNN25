@@ -113,8 +113,8 @@ class Mesh():
         B = sLin.toeplitz(toeplitzRow,toeplitzRow)
         # Fills the matrix A
         for j in range(0, max(self.x_res - 2, self.y_res - 2)):
-            A[j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2) - 1] \
-            [j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2) - 1] \
+            A[j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2), \
+            j * min(self.x_res - 2 ,self.y_res - 2): j * min(self.x_res - 2 ,self.y_res - 2) + min(self.x_res - 2 ,self.y_res - 2)] \
             = B
         A[np.arange((A.shape)[0] - min(self.x_res - 2, self.y_res - 2)), np.arange((A.shape)[0] - min(self.x_res - 2, self.y_res - 2)) + \
                 min(self.x_res - 2, self.y_res - 2)] = 1
