@@ -11,7 +11,7 @@ from pylab import *
 def initRoom3():
     #pdb.set_trace()
     '''
-    Initilizing the "third" room
+    Initilizing the "third" room. Returns a Mesh instance.
     '''
     meshsize=1/20 # Distance between nodes 1/k gives k+1 nodes
     xRoom3=1        #Length of room 3
@@ -55,5 +55,5 @@ def initRoom3():
     mesh3=Mesh(matrix,3,meshsize) 
 
             
-    return matrix
+    return mesh3
     

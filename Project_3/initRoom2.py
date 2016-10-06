@@ -12,7 +12,7 @@ import pdb
 
 def initRoom2():
     '''
-    Initilizing the "second" room
+    Initilizing the "second" room. Returns a Mesh instance
     '''
     meshsize=1/20 # Distance between nodes 1/k gives k+1 nodes
     xRoom2=1        #Length of room 2
@@ -59,5 +59,5 @@ def initRoom2():
     
     mesh2=Mesh(matrix,2,meshsize)
             
-    return matrix
+    return mesh2
     
