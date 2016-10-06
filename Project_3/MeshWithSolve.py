@@ -16,7 +16,7 @@ class Mesh():
     class representing the mesh which discretizes the rooms in project 3
     """
     
-    def __init__(self,stepsize, roomNbr, grid):
+    def __init__(self,grid, roomNbr, stepsize):
         """
         sets up an instance of the mesh-class
         input parameters: 
