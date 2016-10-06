@@ -202,16 +202,16 @@ class Mesh():
         # Updates the values of the inner nodes
         for i in range(0, self.y_res - 2):
             for j in range(0, self.x_res - 2):
-                self.grid[1 + i][1 + j].setFuncVal(newSolution[index])
+                self.grid[1 + i][1 + j].setFuncAndPrevFuncVal(newSolution[index])
                 index += 1
         # Computes the temperatures at the right boundary and stores them in the corresponding mesh nodes
         if roomNbr == 1:
             for i in range(0,self.y_res - 2):
-                self.grid[1+i][self.x_res - 1].setFuncVal(newSolution[self.x_res - 3 + i * min(self.x_res -2, self.y_res - 2)] + self._stepSize * self.grid[1+i][self.x_res - 1].getDeriv())
+                self.grid[1+i][self.x_res - 1].setFuncAndPrevFuncVal(newSolution[self.x_res - 3 + i * min(self.x_res -2, self.y_res - 2)] + self._stepSize * self.grid[1+i][self.x_res - 1].getDeriv())
         # Computes the temperatures at the left boundary and stores them in the corresponding mesh nodes
         elif roomNbr == 3:
             for i in range(0,self.y_res - 2):
-                self.grid[1+i][0].setFuncVal(newSolution[i * min(self.x_res -2, self.y_res - 2)] - self._stepSize * self.grid[1+i][0].getDeriv())
+                self.grid[1+i][0].setFuncAndPrevFuncVal(newSolution[i * min(self.x_res -2, self.y_res - 2)] - self._stepSize * self.grid[1+i][0].getDeriv())
                 
     def doRelaxation(self,omega):
         '''
