@@ -2,7 +2,7 @@
 """
 Created on Wed Oct  5 19:46:49 2016
 
-@author: Anders
+@author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 
 from scipy import *
