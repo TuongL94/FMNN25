@@ -75,23 +75,19 @@ class Interface:
             if self.indices[i][0]==0:
                 #case1: row on the top
                 prevIndex=(self.indices[i][0]+1,self.indices[i][1])
-            elif self.indices[i][0]==self.mesh.y_res:
+            elif self.indices[i][0]==self.mesh.y_res-1:
                 #case2: row on the bottom
-                prevIndex=(self.indices[i][0]-1,self.indices[i,1])
+                prevIndex=(self.indices[i][0]-1,self.indices[i][1])
             elif self.indices[i][1]==0:
                 #case3: column left
                 prevIndex=(self.indices[i][0],self.indices[i][1]+1)
-            elif self.indices[i][1]==self.mesh.x_res:
+            elif self.indices[i][1]==self.mesh.x_res-1:
                 #case4: column right
                 prevIndex=(self.indices[i][0],self.indices[i][1]-1)
             funcVal=self.mesh.grid[self.indices[i]].funcVal
             #funcValPrev==value of the function at x+stepsize
-            funcValPrev=self.mesh.grid[prevIndex[0],prevIndex[1]].prevFuncVal
-            print('funcVal')
-            print(funcVal)
-            print('prev')
-            print(funcValPrev)
-            values[i]=(funcVal+funcValPrev)/self.mesh.meshsize
+            funcValPrev=self.mesh.grid[prevIndex[0],prevIndex[1]].funcVal
+            values[i]=(funcVal-funcValPrev)/self.mesh.meshsize
         return values
 '''
 b=rand(1,5)

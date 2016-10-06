@@ -13,7 +13,7 @@ from MeshWithSolve import Mesh
 #def include(filename):
 #    if os.path.exists(filename): 
 #        exec(compile(open(filename).read()))
-from plot import plot
+from plot import plotWholeRoom
 
 #include('plot.py')
 
@@ -28,7 +28,8 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
     #arrRooms==array with the dimensions of the room
     arrRooms=array([[1,1],[2,1],[1,1]])
     #arrInterfaceTypes==types of the interfaces you are using (need always contain two values!)
-    arrInterfaceTypes=array([[None,NodeType.NEUMANN],[NodeType.DIRICHLET,NodeType.DIRICHLET],[NodeType.NEUMANN,None]])
+    arrInterfaceTypesRec=array([[None,NodeType.NEUMANN],[NodeType.DIRICHLET,NodeType.DIRICHLET],[NodeType.NEUMANN,None]])
+    arrInterfaceTypesSend=array([[None,NodeType.DIRICHLET],[NodeType.NEUMANN,NodeType.NEUMANN],[NodeType.DIRICHLET,None]])
     numberRooms=len(arrRooms)
     comm=MPI.COMM_WORLD
     myRoomNumber=comm.Get_rank()
@@ -102,18 +103,18 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
             #solve the system
             mesh.solveMesh()
             #send the information to the prev/next room
-            sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
+            sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesSend[myRoomNumber])
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
+            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesRec[myRoomNumber])
             mesh.doRelaxation(omega)
         #(even rooms)
         else:
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
+            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesRec[myRoomNumber])
             #solve the system
             mesh.solveMesh()
             #send the information to the prev/next room
-            sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
+            sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesSend[myRoomNumber])
             #do relaxation
             mesh.doRelaxation(omega)
         count=count+1
@@ -126,11 +127,10 @@ def sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,nodeTypes):
     #send information to the previous room (if there is a prev room)
     if 0<myRoomNumber:
         sendbuffer1=interfaces[0].getValues(nodeTypes[0])
-        print('dada')
         comm.send(sendbuffer1,myRoomNumber-1,0)
+        
     #send information to the next room (if there is a next room)
     if numberRooms>myRoomNumber+1:
-        print('dada')
         sendbuffer2=interfaces[1].getValues(nodeTypes[1])
         comm.send(sendbuffer2,myRoomNumber+1,0)
 def receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,nodeTypes):
@@ -141,15 +141,13 @@ def receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,nodeTypes):
     if 0<myRoomNumber:
         status = MPI.Status()
         receiveBuffer1=comm.recv(source=(myRoomNumber-1),status=status)
-        #print(len(receiveBuffer1))
         interfaces[0].setValues(receiveBuffer1,nodeTypes[0])
     #receive information from the next room (if there is a next room)
     if numberRooms>myRoomNumber+1:
         status = MPI.Status()
         receiveBuffer2=comm.recv(source=(myRoomNumber+1),status=status)
-        #print(len(receiveBuffer2))
         interfaces[1].setValues(receiveBuffer2,nodeTypes[1])
 
 #run the calculation
 mesh=doCalculation()
-#plot(mesh)
+plotWholeRoom(mesh)

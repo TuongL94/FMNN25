@@ -26,10 +26,12 @@ def plotWholeRoom(mesh):
     ax = fig.gca(projection='3d')
     X = np.arange(0, mesh.xLength+mesh.meshsize, mesh.meshsize)
     Y = np.arange(0, mesh.yLength+mesh.meshsize, mesh.meshsize)
-    X, Y = np.meshgrid(X, Y)
-    numberOfXNodes = round(mesh.xLength/mesh.meshsize)+1
-    numberOfYNodes = round(mesh.yLength/mesh.meshsize)+1
+    X, Y = np.meshgrid(X,Y)
+    numberOfXNodes = mesh.x_res#round(mesh.xLength/mesh.meshsize)+1
+    numberOfYNodes = mesh.y_res#round(mesh.yLength/mesh.meshsize)+1
     Z = np.array([[mesh.grid[i,j].funcVal for i in range(numberOfYNodes)] for j in range(numberOfXNodes)])
+    if mesh.y_res==2:
+        print()
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
            # add vmin=4, vmax=41, to define lower and upper value for the color-scheme
