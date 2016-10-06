@@ -33,6 +33,13 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
     if myRoomNumber>numberRooms:
         return None
     #do initialization of the rooms and the borders
+    if myRoomNumber==0:
+        mesh=initRoom1()
+    if my RoomNumber==1:
+        mesh=initRoom2()
+    if myRoomNumber==2:
+        mesh=initRoom3()
+    
     
     #do the initialization of the interfaces
     interfaces=array([[None,None]])
