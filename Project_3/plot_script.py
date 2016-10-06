@@ -22,7 +22,7 @@ def plotApartment(valRoom1,valRoom2,valRoom3):
     totalX = valRoom1.shape[1]+valRoom2.shape[1]+valRoom3.shape[1]
     mat = np.zeros([valRoom2.shape[0],totalX])
     mat[0:valRoom1.shape[0],0:valRoom1.shape[1]]=valRoom1
-    mat[0:valRoom2.shape[0],valRoom1.shape[1]:valRoom2.shape[1]]=valRoom2
-    mat[valRoom1.shape[0]:,valRoom1.shape[1]+valRoom2.shape[1]:valRoom1.shape[1]]=valRoom3
+    mat[0:valRoom2.shape[0],valRoom1.shape[1]:valRoom1.shape[1]+valRoom2.shape[1]]=valRoom2
+    mat[valRoom1.shape[0]:-1,valRoom1.shape[1]+valRoom2.shape[1]:valRoom1.shape[1]+valRoom2.shape[1]+valRoom1.shape[1]]=valRoom3
     fig = plotRoom(mat)
     return fig
