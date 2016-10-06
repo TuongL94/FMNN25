@@ -22,13 +22,14 @@ class MeshDyn():
     teaser how the class could be designed for arbitrary room contallations    
     """
     
-    def __init__(self,xLength,yLength,meshsize):
+    def __init__(self,nodeMatrix,xLength,yLength,meshsize):
         """
         sets up an instance of the mesh-class
         input parameters: 
             dimensions of the room (length in x- and y-direction): xLength, yLength
             distance between the nodes: meshsize
         """
+        self.nodeMatrix = nodeMatrix
         self._xLength = xLength
         self._yLength = yLength
         self._meshsize = meshsize
@@ -86,30 +87,30 @@ class MeshDyn():
     meshsize=property(getMeshsize,setMeshsize) 
     # more properties
     
-        def plotRoomPart(self):
-            """
-            surface plot of the temperature in one roompart
-            return: a figure object tha shows the plot
-            """
-            fig = plt.figure()
-            ax = fig.gca(projection='3d')
-            X = np.arange(-self.meshsize, self.xLength+.self.meshsize, \
-            self.meshsize)
-            Y = np.arange(-0.self.meshsize, self.yLength+.self.meshsize, self.meshsize)
-            X, Y = np.meshgrid(X, Y)
-            Z = np.array([[self.nodeMatrix[i,j].funcVal for i in range(self.numberOfYNodes)] \
-                for j in range(self.numberOfXNodes)])
-            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
-                               linewidth=0, antialiased=False)
-            # set limits for z-axis
-            ax.set_zlim(np.amin(Z)-self.meshsize, np.amax(Z)+self.meshsize)
-            # don't know what these two lines are for
-            # x.zaxis.set_major_locator(LinearLocator(10))
-            # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-            # don't know what these two lines are for
-            fig.colorbar(surf, shrink=0.5, aspect=5)
-            plt.show()    
-            return fig
+    def plotRoomPart(self):
+        """
+        surface plot of the temperature in one roompart
+        return: a figure object tha shows the plot
+        """
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        X = np.arange(-self.meshsize, self.xLength+self.meshsize, \
+        self.meshsize)
+        Y = np.arange(-self.meshsize, self.yLength+self.meshsize, self.meshsize)
+        X, Y = np.meshgrid(X, Y)
+        Z = np.array([[self.nodeMatrix[i,j].funcVal for i in range(self.numberOfYNodes)] \
+            for j in range(self.numberOfXNodes)])
+        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
+                           linewidth=0, antialiased=False)
+        # set limits for z-axis
+        ax.set_zlim(np.amin(Z)-self.meshsize, np.amax(Z)+self.meshsize)
+        # don't know what these two lines are for
+        # x.zaxis.set_major_locator(LinearLocator(10))
+        # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+        # don't know what these two lines are for
+        fig.colorbar(surf, shrink=0.5, aspect=5)
+        plt.show()    
+        return fig
     
     # should be part of the init-function
 #    def createNodes(self):

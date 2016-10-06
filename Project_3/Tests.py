@@ -29,6 +29,8 @@ class TestClasses(unittest.TestCase):
         self.nodeNeu = Node(1,2,'Neumann',10)
         self.nodeDir = Node(3,4,'Dirichlet',11)
         self.nodeInner = Node(1,2,'inner',12)
+        testMeshDyn = MeshDyn(self.nodeMatrix,self.stepsize)
+        
         
     def testGetNode(self):
         """
@@ -58,9 +60,6 @@ class TestClasses(unittest.TestCase):
         Tests the resulting heat distribution for the test room
         '''
         #20 steps of solving of the self.testMesh
-        
-        
-        
         for k in range(20):
             self.testMesh.solveMesh()
         
@@ -70,6 +69,11 @@ class TestClasses(unittest.TestCase):
         self.finalTestMesh.plotRoomPart() #Plotting the two temperature distributions in order to compare visually
         self.assertTrue(allclose(calcValMatrix,finalValMatrix,atol=1)) #Tolerence of 1 degreee absolute difference
         
+    def testSolveMatrices(self):
+        '''
+        Compares the different solve matrices (dynamic and static)
+        '''
+        lapA, rhs = MeshDyn.setupSolveMatrixAndRhs()
         
         
 
