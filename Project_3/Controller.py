@@ -8,7 +8,14 @@ from scipy import *
 from Node import NodeType,Node
 from Interface import Interface
 from MeshWithSolve import Mesh
-from plot import *
+#import os
+
+#def include(filename):
+#    if os.path.exists(filename): 
+#        exec(compile(open(filename).read()))
+from plot import plot
+
+#include('plot.py')
 
 def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
     '''
@@ -35,38 +42,41 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
         return None
     #do initialization of the rooms and the borders
     if myRoomNumber==0:
-        from initRoom1 import *
+        from initRoom1 import initRoom1        
+        #include('initRoom1.py')
         mesh=initRoom1()
     if myRoomNumber==1:
-        from initRoom2 import *
+        from initRoom2 import initRoom2
+        #include('initRoom2.py')
         mesh=initRoom2()
     if myRoomNumber==2:
-        from initRoom3 import *
+        from initRoom3 import initRoom3
+        #include('initRoom3.py')
         mesh=initRoom3()
     
     
     #do the initialization of the interfaces
-    interfaces=array([[None,None]])
+    interfaces=array([None,None])
     #just initialize my interfaces
     #rooms on the left side
     if(myRoomNumber!=0):
         if myRoomNumber%2!=0:
             #odd rooms have the interface on the bottom (use floor, because you need more the edges as well!)
-            indices=array([(0,j) for j in range(math.floor(mesh.dim[0]/2),mesh.dim[0])])
+            indices=array([(0,j) for j in range(math.floor(mesh.x_res/2),mesh.x_res)])
             interfaces[0]=Interface(mesh,indices)
         else:
             #even rooms on the top (have the whole border as an interface)
-            indices=array([(0,j) for j in range(0,mesh.dim[0])])
+            indices=array([(0,j) for j in range(0,mesh.x_res)])
             interfaces[0]=Interface(mesh,indices)
     #rooms on the right side
     if(myRoomNumber!=numberRooms-1):
         if myRoomNumber%2!=0:
             #odd rooms have the interface on the top (use round, because you need more the edges as well!)
-            indices=array([(j,0) for j in range(0,math.round(mesh.dim[0]/2))])
+            indices=array([(j,0) for j in range(0,round(mesh.x_res/2))])
             interfaces[1]=Interface(mesh,indices)
         else:
             #even rooms on the bottom (have the whole border as an interface)
-            indices=array([(j,0) for j in range(0,mesh.dim[0])])
+            indices=array([(j,0) for j in range(0,mesh.x_res)])
             interfaces[1]=Interface(mesh,indices)
     '''
     pseudocode
@@ -92,23 +102,23 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
             #solve the system
             mesh.solveMesh()
             #send the information to the prev/next room
-            sendInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
+            sendInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
+            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
             mesh.doRelaxation(omega)
         #(even rooms)
         else:
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
+            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
             #solve the system
             mesh.solveMesh()
             #send the information to the prev/next room
-            sendInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
+            sendInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
             #do relaxation
             mesh.doRelaxation(omega)
     return mesh
 
-def sendInterfaceInfo(myRoomNumber,nodeTypes):
+def sendInterfaceInfo(comm,myRoomNumber,numberRooms,nodeTypes):
     '''
         send the information to the next/previous room (if they exist)
     '''
@@ -120,7 +130,7 @@ def sendInterfaceInfo(myRoomNumber,nodeTypes):
     if numberRooms>myRoomNumber+1:
         sendbuffer2=interfaces[1].getValues(nodeTypes[1])
         comm.send(sendbuffer2,(myRoomNumber-1)%numberRooms,0)
-def receiveInterfaceInfo(myRoomNumber,nodeTypes):
+def receiveInterfaceInfo(comm,myRoomNumber,numberRooms,nodeTypes):
     '''
         receive the information to the next/previous room (if they exist)
     '''
