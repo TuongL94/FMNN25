@@ -22,22 +22,62 @@ class MeshDyn():
     teaser how the class could be designed for arbitrary room contallations    
     """
     
-    def __init__(self,nodeMatrix,xLength,yLength,meshsize):
+    def __init__(self,nodeMatrix=None,xLength=None,yLength=None,boundary=None,meshsize):
         """
         sets up an instance of the mesh-class
         input parameters: 
-            dimensions of the room (length in x- and y-direction): xLength, yLength
+            either a complete node matrix
+            or the dimensions of the room (length in x- and y-direction): xLength, yLength
+            and specifications of the boundaries
+            here: only sinple case: one bounday has only one boundary condition
+            give array [a,b,c,d], where a, b, c, d can be either 'N' or 'D'
+            (Neumann or Dirichlet boundary) 
+            a is the left, b the lower, c the right and d the upper wall of the room
             distance between the nodes: meshsize
         """
-        self.nodeMatrix = nodeMatrix
-        self._xLength = xLength
-        self._yLength = yLength
+        if nodeMatrix is None:
+            #setup algorithm
+            raise Exception('Algorithm missing.')
+            self._xLength = xLength
+            self._yLength = yLength
+            self.numberOfXNodes = self.xLength/self.meshsize+1
+            self.numberOfYNodes = self.yLength/self.meshsize+1
+        else:
+            self.nodeMatrix = nodeMatrix
+            self.numberOfXNodes = nodeMatrix.shape[1]
+            self.numberOfYNodes = nodeMatrix.shape[0]
+            
+        if xLength is None:
+            if nodeMatrix is None:
+                raise Exception('Give either a matrix or the parameter to set up one.')
+        else:
+            self._xLength = (nodeMatrix.shape[1]-1)*meshsize
+            self._yLength = (nodeMatrix.shape[2]-1)*meshsize
+        
         self._meshsize = meshsize
-        self.numberOfXNodes = self.xLength/self.meshsize+1
-        self.numberOfYNodes = self.yLength/self.meshsize+1
+        
         # some more input parameter
         # algo to set up the nodeMatrix
         
+            # should be part of the init-function
+#    def createNodes(self):
+#        # create instances of the node-class for the given mesh?
+#        # implement actual algorithm
+#        """
+#        return:
+#        """
+#        # What do we do if stepsize doesn't devide wdth or length exactly?
+#        # calculate the number off needed nodes in x- and y-direction        
+#        numberOfXNodes = self._xLength/self._meshsize+1
+#        numberOfYNodes = self._yLength/self._meshsize+1
+#        # preallocate a matrix to store the nodes in it
+#        mesh = np.empty(numberOfYNodes,numberOfXNodes,dtype=object)
+#        for i in range(numberOfYNodes):
+#            for j in range(numberOfXNodes):
+#                mesh[:,:] = Node(self._meshsize*i,self._meshsize*j,'inner')
+#        for j in range(numberOfXNodes):
+#            mesh[,]
+#        return mesh
     
     def getXLength(self):
         """
@@ -112,25 +152,6 @@ class MeshDyn():
         plt.show()    
         return fig
     
-    # should be part of the init-function
-#    def createNodes(self):
-#        # create instances of the node-class for the given mesh?
-#        # implement actual algorithm
-#        """
-#        return:
-#        """
-#        # What do we do if stepsize doesn't devide wdth or length exactly?
-#        # calculate the number off needed nodes in x- and y-direction        
-#        numberOfXNodes = self._xLength/self._meshsize+1
-#        numberOfYNodes = self._yLength/self._meshsize+1
-#        # preallocate a matrix to store the nodes in it
-#        mesh = np.empty(numberOfYNodes,numberOfXNodes,dtype=object)
-#        for i in range(numberOfYNodes):
-#            for j in range(numberOfXNodes):
-#                mesh[:,:] = Node(self._meshsize*i,self._meshsize*j,'inner')
-#        for j in range(numberOfXNodes):
-#            mesh[,]
-#        return mesh
 
     def setupSolveMatrixAndRhs(self):
         """
@@ -177,7 +198,7 @@ class MeshDyn():
                     if self.nodeMatrix[i+1,j].nodeType == 'inner':
                         lapA[counter,counter+1] = 1     
                     elif self.nodeMatrix[i+1,j].nodeType == 'Dirichlet':
-                        rhs[counter] = rhs[counterY]-self.nodeMatrix[i+1,j].funcVal                                
+                        rhs[counter] = rhs[counter]-self.nodeMatrix[i+1,j].funcVal                                
                     else:
                         lapA[counter,counter+1] = 1
                     # [i,j-1]
@@ -219,7 +240,7 @@ class MeshDyn():
                         if self.nodeMatrix[i+1,j].nodeType == 'inner':
                             lapA[counter,counter+1] = 1     
                         elif self.nodeMatrix[i+1,j].nodeType == 'Dirichlet':
-                            rhs[counter] = rhs[counterY]-self.nodeMatrix[i+1,j].funcVal                                
+                            rhs[counter] = rhs[counter]-self.nodeMatrix[i+1,j].funcVal                                
                         else:
                             lapA[counter,counter+1] = 1
                     # set derivative on right hand side
@@ -253,14 +274,12 @@ class MeshDyn():
         return lapA, rhs
         
     
-    #def solveMesh(self,...):
-        # check which input arguments are missing
-        # implement the actual function
+    def solveMesh(self,lapA,rhs):
         """
         function solving the discretized Laplace-equation for the given mesh
-        return: data that can be used for a plot
         """
-        # repeatedly calls solveNode to solve the linear system arrising from 
-        # discretized Laplace equation at every node?
-        # ordering the data in a sensible output type
-        #return
+        valVec = sp.linalg.solve(lapA,rhs)
+        valMat = valVec.np.reshape(self.numberOfYnodes,self.numberOfXNodes)
+        for i in range(self.numberOfYNodes):
+            for j in range(self.numberOfXNodes):
+                self.nodeMatrix[i,j].funcVal = valMat[i,j]
