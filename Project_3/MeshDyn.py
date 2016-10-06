@@ -36,8 +36,8 @@ class MeshDyn():
             distance between the nodes: meshsize
         """
         if grid is None:
-            #setup algorithm
-            raise Exception('Algorithm missing.')
+            #setup algorithm          
+            raise Exception('Algorithm provided if you want to employ us ;).')
             self._xLength = xLength
             self._yLength = yLength
             self.numberOfXNodes = round(self.xLength/self.meshsize)+1
@@ -47,12 +47,12 @@ class MeshDyn():
             self.numberOfXNodes = grid.shape[1]
             self.numberOfYNodes = grid.shape[0]
             
-        #if xLength is None:
-        #     if grid is None:
-        #        raise Exception('Give either a matrix or the parameter to set up one.')
-        #else:
-        self._xLength = round(grid.shape[1]-1)*meshsize
-        self._yLength = round(grid.shape[0]-1)*meshsize
+        if xLength is None:
+            if grid is None:
+                raise Exception('Give either a matrix or the parameter to set up one.')
+            else:
+                self._xLength = round(grid.shape[1]-1)*meshsize
+                self._yLength = round(grid.shape[0]-1)*meshsize
         
         self.numberOfNodes = self.numberOfXNodes*self.numberOfYNodes
         self._meshsize = meshsize
