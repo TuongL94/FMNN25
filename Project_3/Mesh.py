@@ -1,80 +1,86 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct  1 09:39:00 2016
-
 @author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 import scipy as sp
 import pylab as pl
-
+from Node import Node,NodeType
 
 class Mesh():
     """
-    class representing the mesh which discretizes the rooms in project 3
+    Class representing the mesh of nodes that constitutes a room
     """
     
-    def __init__(self,xLength,yLength,meshsize):
+    def __init__(self,nodeMatrix,roomNbr,stepSize):
         """
-        sets up an instance of the mesh-class
+        Sets up an instance of the mesh-class
         input parameters: 
-            dimensions of the room (length in x- and y-direction): xLength, yLength
-            distance between the nodes: meshsize
+            :nodeMatrix: A matrix (array) of Nodes
+            :roomNbr: The number of the room
+            :stepSize: The distance between two nodes in the node matrix
         """
-        self._xLength = xLength
-        self._yLength = yLength
-        self._meshsize = meshsize
-        
+        self._nodeMatrix=nodeMatrix
+        self._roomNbr=roomNbr
+        self._stepSize=stepSize
+        try:
+            self._dim=len(nodeMatrix),len(nodeMatrix[0])
+        except:
+            raise Exception('nodeMatrix is not a Matrix!')
     
-    def getXLength(self):
-        """
-        get-function for the length of the mesh in x-direction
-        return: x-length of the mesh
-        """
-        return self._xLength
+    def getNodeMatrix(self):
+        '''
+        Get function for the nodeMatrix
+        '''
+        return self._nodeMatrix
+    
+    def setNodeMatrix(self,nodeMatrix):
+        '''
+        Set function for the nodeMatrix
+        '''
+        self._nodeMatrix=nodeMatrix
         
-    def getYLength(self):
-        """
-        get-function for the length of the mesh in y-direction
-        return: y-length of the mesh
-        """
-        return self._yLength
+    def getStepsize(self):
+        '''
+        Get function for the step size
+        '''
+        return self._stepSize
         
-    def getMeshsize(self):
-        """
-        get-function for the meshsize of the mesh 
-        return: meshsize
-        """
-        return self._meshsize
+    def setStepsize(self,stepsize):
+        '''
+        Set function for the step size (not allowed)
+        '''
+        raise Exception('You are not allowed to change the step size!')
         
-    def setXLength(self,xLength):
-        """
-        set-function for the x-length (not allowed to use)
-        """
-        raise Exception('You are not allowed to change the dimensions of the mesh!')
+    def getRoomNbr(self):
+        '''
+        Get function for the room number
+        '''
+        return self._roomNbr
         
-    def setYLength(self,yLength):
-        """
-        set-function for the y-length (not allowed to use)
-        """
-        raise Exception('You are not allowed to change the dimensions of the mesh!')
+    def setRoomNbr(self,rNbr):
+        '''
+        Set function for the room number (not allowed)
+        '''
+        raise Exception('You are not allowed to change the room number!')
 
-    def setMeshsize(self,meshsize):
-        """
-        set-function for the meshsize (not allowed to use)
-        """
-        raise Exception('You are not allowed to change the meshsize!')
+    def getDim(self):
+        '''
+        Get function for the dimension of the nodeMatrix
+        '''
+        return self._dim
+
+    def setDim(self,dim):
+        '''
+        Set function for the dimension (not allowed)
+        '''
+        raise Exception('You are not allowed to change the dimension!')
     
-    xLength=property(getXLength,setXLength)
-    yLength=property(getYLength,setYLength)
-    meshsize=property(getMeshsize,setMeshsize)       
         
-    def createNodes(self):
-        # create instances of the node-class for the given mesh?
-        # implement actual algorithm
-        """
-        return:
-        """
-        return #list of all the node-objects reated?    
+    nodeMatrix=property(getNodeMatrix,setNodeMatrix)      
+    roomNbr=property(getRoomNbr,setRoomNbr)
+    stepSize=property(getStepsize,setStepsize)
+    dim=property(getDim,setDim)
     
     #def solveMesh(self,...):
         # check which input arguments are missing
@@ -97,4 +103,54 @@ class Mesh():
         _funVal of the node
         return: something the solveMesh function can work with
         """
-        #return   
+        #return  
+        
+    def getValMatrix(self):
+        '''
+        Returns a matrix with the temperature in every node
+        '''
+        valMatrix=zeros(self._dim)
+        for i in len(self._dim[0]):
+            for j in len(self._dim[1]):
+                valMatrix[i,j]=self._nodeMatrix[i,j].getFuncVal()
+        return valMatrix
+    
+    def solveAndStore(self):
+        """
+        solves and stores the solution into the nodes
+        """
+        vec=self.solve()
+        self.store(vec)
+        
+    def store(self,vec):
+        '''
+        stores the values in the vector into the nodes in the nodeMatrix
+        '''
+        lenVec=len(vec)
+        if lenVec!=self.dim[0]*self.dim[1]:
+            raise Exception('The vector and the node matrix need to have the same number of elements!')
+        for i in range(lenVec):
+            #set prevFuncVal=u_k and funcVal=u_{k+1}
+            self.nodeMatrix[indexVec2indexMat(i)].setFuncValAndPrevFuncVal(vec[i])
+
+    def indexVec2indexMat(self,indexVec):
+        '''
+        calculate for the index of the vector the index to the corresponding element
+        in the matrix
+        '''
+        numberOfColumns=self.dim[0]
+        row=math.floor(indexVec/numberOfColumns)
+        column=indexVec%numberOfColumns
+        return row,column
+        
+    def doRelaxation(self,omega):
+        '''
+        calculate the new values at the boundary
+        relaxValue=omega*u_{k+1}+(1-omega)*u_k
+        we store the new value onto u_{k+1}
+        '''
+        coeff2=1-omega #to speed up the calculation calculate this just once
+        for i in len(self.nodeMatrix):
+            for j in len(self.nodeMatrix[0]):
+                #u_{k+1}=omega*u_{k+1}+(1-omega)*u_k
+                self.nodeMatrix[i,j].funcVal=omega*self.nodeMatrix[i,j].funcVal+coeff2*self.nodeMatrix[i,j].prevFuncVal
