@@ -6,7 +6,8 @@ Created on Sat Oct  1 09:39:00 2016
 import scipy as sp
 import pylab as pl
 import unittest
-from Mesh import Mesh
+from MeshWithSolve import Mesh
+from MeshDyn import MeshDyn
 from Node import Node
 
 
@@ -58,8 +59,10 @@ class TestClasses(unittest.TestCase):
         '''
         #20 steps of solving of the self.testMesh
         
+        
+        
         for k in range(20):
-            self.testMesh.solveAndStore()
+            self.testMesh.solveMesh()
         
         calcValMatrix=self.testMesh.getValMatrix()
         finalValMatrix=self.finalTestMesh.getValMatrix()
