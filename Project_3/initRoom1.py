@@ -7,6 +7,8 @@ Created on Tue Oct  4 13:59:02 2016
 
 from scipy import *
 from pylab import *
+from Node import Node
+from MeshWithSolve import Mesh
 
 
 def initRoom1():
