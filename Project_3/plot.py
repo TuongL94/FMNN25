@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct  5 14:48:27 2016
-
 @author: as
 """
 from  scipy import *
@@ -25,13 +24,12 @@ def plotWholeRoom(mesh):
     """
     fig = plt.figure()
     ax = fig.gca(projection='3d')
-    X = np.arange(-mesh.meshsize, mesh.xLength+mesh.meshsize, mesh.meshsize)
-    Y = np.arange(-mesh.meshsize, mesh.yLength+mesh.meshsize, mesh.meshsize)
+    X = np.arange(0, mesh.xLength+mesh.meshsize, mesh.meshsize)
+    Y = np.arange(0, mesh.yLength+mesh.meshsize, mesh.meshsize)
     X, Y = np.meshgrid(X, Y)
-    numberOfXNodes = mesh.xLength/mesh.meshsize+1
-    numberOfYNodes = mesh.yLength/mesh.meshsize+1
-    Z = np.array([[mesh.nodeMatrix[i,j].funcVal for i in range(numberOfYNodes)] \
-        for j in range(numberOfXNodes)])
+    numberOfXNodes = round(mesh.xLength/mesh.meshsize)+1
+    numberOfYNodes = round(mesh.yLength/mesh.meshsize)+1
+    Z = np.array([[mesh.grid[i,j].funcVal for i in range(numberOfYNodes)] for j in range(numberOfXNodes)])
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
     # set limits for z-axis
