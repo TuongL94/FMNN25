@@ -7,7 +7,7 @@ Created on Mon Oct  3 18:01:51 2016
 
 from scipy import *
 from pylab import *
-from Mesh import Mesh
+from MeshWithSolve import Mesh
 from Node import Node
 
 class Interface:
@@ -73,13 +73,13 @@ class Interface:
             if self.indices[i,0]==0:
                 #case1: row on the top
                 prevIndex=(indices[i,0]+1,indices[i,1])
-            elif self.indices[i,0]==self.mesh.dim[0]:
+            elif self.indices[i,0]==self.mesh.x_res:
                 #case2: row on the bottom
                 prevIndex=(indices[i,0]-1,indices[i,1])
             elif self.indices[i,1]==0:
                 #case3: column left
                 prevIndex=(indices[i,0],indices[i,1]+1)
-            elif self.indices[i,1]==self.mesh.dim[1]:
+            elif self.indices[i,1]==self.mesh.y_res:
                 #case4: column right
                 prevIndex=(indices[i,0],indices[i,1]-1)
             funcVal=self.mesh.nodes[indices[i]].funcVal
