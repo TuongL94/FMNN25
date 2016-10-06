@@ -29,7 +29,7 @@ class Interface:
     def setIndices(self,indices):
         raise Exception('Your are not allowed to set the value of the border!')
     def getMesh(self):
-        return self._indices
+        return self._mesh
         
     def setMesh(self,indices):
         raise Exception('Your are not allowed to set the value of the mesh!')
