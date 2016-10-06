@@ -13,6 +13,7 @@ from Node import Node
 from initTestRoom import initTestRoom
 from initFinalTestRoom import initFinalTestRoom
 from plot import plotWholeRoom
+from plotValMatrix import plotRoom
 
 
 
@@ -89,6 +90,8 @@ class TestClasses(unittest.TestCase):
         #pdb.set_trace()
         plotWholeRoom(self.testMeshDyn) #Plotting the two temperature distributions in order to compare visually
         plotWholeRoom(self.finalTestMesh)
+        print('--------------------------------------------')
+        plotRoom(solMat)
         self.assertTrue(np.allclose(solMat,finalValMatrix,rtol=0,atol=0.0001)) #Tolerence of 0.0001 degreee absolute difference
         
     def testSolveMatrices(self):
@@ -99,6 +102,9 @@ class TestClasses(unittest.TestCase):
         solMat = self.testMeshDyn.solveMesh(lapA,rhs)
         self.testMesh.solveMesh()
         calcValMatrix=self.testMesh.getValMatrix()
+        print('--------------------------------------------')
+        plotRoom(solMat)
+        plotRoom(calcValMatrix)
         self.assertTrue(np.allclose(solMat,calcValMatrix,rtol=0,atol=1e-13))
 
 if __name__=='__main__':
