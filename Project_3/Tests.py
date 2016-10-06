@@ -5,10 +5,14 @@ Created on Sat Oct  1 09:39:00 2016
 """
 import scipy as sp
 import pylab as pl
+#import numpy as np
 import unittest
 from MeshWithSolve import Mesh
-from MeshDyn import MeshDyn
 from Node import Node
+from initTestRoom import initTestRoom
+from initFinalTestRoom import initFinalTestRoom
+from plot import plotWholeRoom
+
 
 
 class TestClasses(unittest.TestCase):
@@ -25,12 +29,10 @@ class TestClasses(unittest.TestCase):
         self.stepsize=1/20
         self.roomNbr=2
         self.testMesh = Mesh(self.nodeMatrix,self.roomNbr,self.stepsize)
-        self.finalTestMesh=Mesh(self.finalNodeMatrix,self.roomNbr,stepsize)
+        self.finalTestMesh=Mesh(self.finalNodeMatrix,self.roomNbr,self.stepsize)
         self.nodeNeu = Node(1,2,'Neumann',10)
         self.nodeDir = Node(3,4,'Dirichlet',11)
         self.nodeInner = Node(1,2,'inner',12)
-        testMeshDyn = MeshDyn(self.nodeMatrix,self.stepsize)
-        
         
     def testGetNode(self):
         """
@@ -59,21 +61,16 @@ class TestClasses(unittest.TestCase):
         '''
         Tests the resulting heat distribution for the test room
         '''
-        #20 steps of solving of the self.testMesh
-        for k in range(20):
-            self.testMesh.solveMesh()
+        
+        self.testMesh.solveMesh()
         
         calcValMatrix=self.testMesh.getValMatrix()
         finalValMatrix=self.finalTestMesh.getValMatrix()
-        self.testMesh.plotRoomPart()
-        self.finalTestMesh.plotRoomPart() #Plotting the two temperature distributions in order to compare visually
-        self.assertTrue(allclose(calcValMatrix,finalValMatrix,atol=1)) #Tolerence of 1 degreee absolute difference
+        #pdb.set_trace()
+        plotWholeRoom(self.testMesh)
+        plotWholeRoom(self.finalTestMesh) #Plotting the two temperature distributions in order to compare visually
+        self.assertTrue(np.allclose(calcValMatrix,finalValMatrix,rtol=0,atol=1)) #Tolerence of 1 degreee absolute difference
         
-    def testSolveMatrices(self):
-        '''
-        Compares the different solve matrices (dynamic and static)
-        '''
-        lapA, rhs = MeshDyn.setupSolveMatrixAndRhs()
         
         
 
