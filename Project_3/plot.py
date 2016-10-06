@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct  5 14:48:27 2016
-@author: as
+@author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 from  scipy import *
 from  pylab import *
