@@ -212,4 +212,15 @@ class Mesh():
         elif roomNbr == 3:
             for i in range(0,self.y_res - 2):
                 self.grid[1+i][0].setFuncVal(newSolution[i * min(self.x_res -2, self.y_res - 2)] - self._stepSize * self.grid[1+i][0].getDeriv())
-
+                
+    def doRelaxation(self,omega):
+        '''
+        calculate the new values at the boundary
+        relaxValue=omega*u_{k+1}+(1-omega)*u_k
+        we store the new value onto u_{k+1}
+        '''
+        coeff2=1-omega #to speed up the calculation calculate this just once
+        for i in len(self.grid):
+            for j in len(self.grid[0]):
+                #u_{k+1}=omega*u_{k+1}+(1-omega)*u_k
+                self.grid[i,j].funcVal=omega*self.grid[i,j].funcVal+coeff2*self.grid[i,j].prevFuncVal
