@@ -32,6 +32,7 @@ def plotWholeRoom(mesh):
     Z = np.array([[mesh.grid[i,j].funcVal for i in range(numberOfYNodes)] for j in range(numberOfXNodes)])
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
+           # add vmin=4, vmax=41, to define lower and upper value for the color-scheme
     # set limits for z-axis
     ax.set_zlim(np.amin(Z)-mesh.meshsize, np.amax(Z)+mesh.meshsize)
     # don't know what these two lines are for

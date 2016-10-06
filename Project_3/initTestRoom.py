@@ -5,6 +5,7 @@ Created on Tue Oct  4 13:59:02 2016
 @author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 
+from Node import Node
 from scipy import *
 from pylab import *
 
