@@ -7,9 +7,10 @@ from mpi4py import MPI
 from scipy import *
 from Node import NodeType,Node
 from Interface import Interface
-from Mesh import Mesh
+from MeshWithSolve import Mesh
+from plot import *
 
-def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
+def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
     '''
     do the calculation of the heat distribution
     stepsize=distance to the next node
@@ -34,10 +35,13 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
         return None
     #do initialization of the rooms and the borders
     if myRoomNumber==0:
+        from initRoom1 import *
         mesh=initRoom1()
-    if my RoomNumber==1:
+    if myRoomNumber==1:
+        from initRoom2 import *
         mesh=initRoom2()
     if myRoomNumber==2:
+        from initRoom3 import *
         mesh=initRoom3()
     
     
@@ -59,11 +63,11 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
         if myRoomNumber%2!=0:
             #odd rooms have the interface on the top (use round, because you need more the edges as well!)
             indices=array([(j,0) for j in range(0,math.round(mesh.dim[0]/2))])
-            interfaces[0]=Interface(mesh,indices)
+            interfaces[1]=Interface(mesh,indices)
         else:
             #even rooms on the bottom (have the whole border as an interface)
             indices=array([(j,0) for j in range(0,mesh.dim[0])])
-            interfaces[0]=Interface(mesh,indices)
+            interfaces[1]=Interface(mesh,indices)
     '''
     pseudocode
     store previous send data
@@ -86,7 +90,7 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
         #(odd rooms)
         if myRoomNumber%2!=0:
             #solve the system
-            mesh.solveAndStore()
+            mesh.solveMesh()
             #send the information to the prev/next room
             sendInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
             #reveive the information to the prev/next room
@@ -97,7 +101,7 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8):
             #reveive the information to the prev/next room
             receiveInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
             #solve the system
-            mesh.solveAndStore()
+            mesh.solveMesh()
             #send the information to the prev/next room
             sendInterfaceInfo(myRoomNumber,arrInterfaceTypes[myRoomNumber])
             #do relaxation
@@ -132,4 +136,5 @@ def receiveInterfaceInfo(myRoomNumber,nodeTypes):
         interfaces[1].setValues(receiveBuffer2,nodeTypes[1])
 
 #run the calculation
-#doCalculation();
+mesh=doCalculation()
+plot(mesh)
