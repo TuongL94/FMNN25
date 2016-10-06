@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct  1 09:39:00 2016
-
 @author: Anders Hansson, Tuong Lam, Bernhard Pöchtrager, Annika Stegie
 """
 import scipy as sp
@@ -28,8 +27,8 @@ class Mesh():
         self._stepSize = stepsize
         self.roomNbr = roomNbr
         self.grid = grid
-        self.x_res = (grid.shape)[0]
-        self.y_res = (grid.shape)[1]
+        self.x_res = (grid.shape)[1]
+        self.y_res = (grid.shape)[0]
 
 
     def getXLength(self):
@@ -212,7 +211,7 @@ class Mesh():
         elif roomNbr == 3:
             for i in range(0,self.y_res - 2):
                 self.grid[1+i][0].setFuncAndPrevFuncVal(newSolution[i * min(self.x_res -2, self.y_res - 2)] - self._stepSize * self.grid[1+i][0].getDeriv())
-                
+
     def doRelaxation(self,omega):
         '''
         calculate the new values at the boundary
@@ -220,7 +219,7 @@ class Mesh():
         we store the new value onto u_{k+1}
         '''
         coeff2=1-omega #to speed up the calculation calculate this just once
-        for i in len(self.grid):
-            for j in len(self.grid[0]):
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[0])):
                 #u_{k+1}=omega*u_{k+1}+(1-omega)*u_k
                 self.grid[i,j].funcVal=omega*self.grid[i,j].funcVal+coeff2*self.grid[i,j].prevFuncVal

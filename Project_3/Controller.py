@@ -62,21 +62,21 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
     if(myRoomNumber!=0):
         if myRoomNumber%2!=0:
             #odd rooms have the interface on the bottom (use floor, because you need more the edges as well!)
-            indices=array([(0,j) for j in range(math.floor(mesh.x_res/2),mesh.x_res)])
+            indices=[(j,0) for j in range(math.floor(mesh.y_res/2),mesh.y_res)]
             interfaces[0]=Interface(mesh,indices)
         else:
             #even rooms on the top (have the whole border as an interface)
-            indices=array([(0,j) for j in range(0,mesh.x_res)])
+            indices=[(j,0) for j in range(0,mesh.y_res)]
             interfaces[0]=Interface(mesh,indices)
     #rooms on the right side
     if(myRoomNumber!=numberRooms-1):
         if myRoomNumber%2!=0:
             #odd rooms have the interface on the top (use round, because you need more the edges as well!)
-            indices=array([(j,0) for j in range(0,round(mesh.x_res/2))])
+            indices=[(j,mesh.x_res-1) for j in range(0,round(mesh.y_res/2)+1)]
             interfaces[1]=Interface(mesh,indices)
         else:
             #even rooms on the bottom (have the whole border as an interface)
-            indices=array([(j,0) for j in range(0,mesh.x_res)])
+            indices=[(j,mesh.x_res-1) for j in range(0,mesh.y_res)]
             interfaces[1]=Interface(mesh,indices)
     '''
     pseudocode
@@ -102,35 +102,38 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
             #solve the system
             mesh.solveMesh()
             #send the information to the prev/next room
-            sendInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
+            sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
+            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
             mesh.doRelaxation(omega)
         #(even rooms)
         else:
             #reveive the information to the prev/next room
-            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
+            receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
             #solve the system
             mesh.solveMesh()
             #send the information to the prev/next room
-            sendInterfaceInfo(comm,myRoomNumber,numberRooms,arrInterfaceTypes[myRoomNumber])
+            sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypes[myRoomNumber])
             #do relaxation
             mesh.doRelaxation(omega)
+        count=count+1
     return mesh
 
-def sendInterfaceInfo(comm,myRoomNumber,numberRooms,nodeTypes):
+def sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,nodeTypes):
     '''
         send the information to the next/previous room (if they exist)
     '''
     #send information to the previous room (if there is a prev room)
     if 0<myRoomNumber:
         sendbuffer1=interfaces[0].getValues(nodeTypes[0])
+        print('dada')
         comm.send(sendbuffer1,myRoomNumber-1,0)
     #send information to the next room (if there is a next room)
     if numberRooms>myRoomNumber+1:
+        print('dada')
         sendbuffer2=interfaces[1].getValues(nodeTypes[1])
-        comm.send(sendbuffer2,(myRoomNumber-1)%numberRooms,0)
-def receiveInterfaceInfo(comm,myRoomNumber,numberRooms,nodeTypes):
+        comm.send(sendbuffer2,myRoomNumber+1,0)
+def receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,nodeTypes):
     '''
         receive the information to the next/previous room (if they exist)
     '''
@@ -138,13 +141,15 @@ def receiveInterfaceInfo(comm,myRoomNumber,numberRooms,nodeTypes):
     if 0<myRoomNumber:
         status = MPI.Status()
         receiveBuffer1=comm.recv(source=(myRoomNumber-1),status=status)
+        #print(len(receiveBuffer1))
         interfaces[0].setValues(receiveBuffer1,nodeTypes[0])
     #receive information from the next room (if there is a next room)
     if numberRooms>myRoomNumber+1:
         status = MPI.Status()
         receiveBuffer2=comm.recv(source=(myRoomNumber+1),status=status)
+        #print(len(receiveBuffer2))
         interfaces[1].setValues(receiveBuffer2,nodeTypes[1])
 
 #run the calculation
 mesh=doCalculation()
-plot(mesh)
+#plot(mesh)
