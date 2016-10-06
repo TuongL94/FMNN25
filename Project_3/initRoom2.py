@@ -20,7 +20,8 @@ def initRoom2():
     xNodes=round(xRoom2/meshsize+1) # nbr of nodes in x-direction
     yNodes=round(yRoom2/meshsize+1) # nbr of nodes in y-dierction
     matrix=empty((yNodes,xNodes),dtype=Node)    #Create empty array
-    
+    #pdb.set_trace()
+    ytemp=round(yNodes/2)
      
     '''
     Starting by setting all nodes to inner nodes
@@ -43,7 +44,7 @@ def initRoom2():
         #Lowerleft interface
         matrix[k+round(yNodes/2),0].setNodeType('Dirichlet')
         #Lowerright normal wall
-        matrix[k+round(yNodes/2),round(xNodes)-1].setNodeType('Dirichlet')
+        matrix[k+round(yNodes/2),xNodes-1].setNodeType('Dirichlet')
     '''
     Setting the window and heater (horizontal walls)
     '''
