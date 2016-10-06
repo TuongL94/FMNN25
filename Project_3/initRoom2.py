@@ -39,9 +39,9 @@ def initRoom2():
         #Upperleft normal wall
         matrix[k,0].setNodeType('Dirichlet')
         #Upperright interface
-        matrix[k,xNodes-1].setNodeType('Neumann')
+        matrix[k,xNodes-1].setNodeType('Dirichlet')
         #Lowerleft interface
-        matrix[k+round(yNodes/2),0].setNodeType('Neumann')
+        matrix[k+round(yNodes/2),0].setNodeType('Dirichlet')
         #Lowerright normal wall
         matrix[k+round(yNodes/2),round(xNodes)-1].setNodeType('Dirichlet')
     '''
@@ -57,9 +57,7 @@ def initRoom2():
         
 
     
-    mesh2=Mesh(matrix)
-    #This is how I would like to create a mesh object.
+    mesh2=Mesh(matrix,2,meshsize)
             
     return matrix
     
-M2=initRoom2()

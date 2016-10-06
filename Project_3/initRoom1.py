@@ -38,7 +38,7 @@ def initRoom1():
     for k in range(yNodes):
         matrix[k,0].setFuncVal(40)
         matrix[k,0].setNodeType('Dirichlet')
-        matrix[k,xNodes-1].setNodeType('Dirichlet')
+        matrix[k,xNodes-1].setNodeType('Neumann')
         
     '''
     Setting the normal walls
@@ -51,10 +51,9 @@ def initRoom1():
     '''
     Creating an instance of a Mesh (room 1)
     '''   
-    mesh1=Mesh(matrix) 
-    #This is how I would like to create a mesh object.
+    mesh1=Mesh(matrix,1,meshsize) 
+
 
             
     return matrix
 
-M1=initRoom1()
