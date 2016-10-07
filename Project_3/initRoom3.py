@@ -38,6 +38,7 @@ def initRoom3():
     '''
     for k in range(yNodes):
         matrix[k,xNodes-1].setFuncVal(40)
+        matrix[k,xNodes-1].setPrevFuncVal(40)
         matrix[k,xNodes-1].setNodeType('Dirichlet')
         matrix[k,0].setNodeType('Neumann')
         

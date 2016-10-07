@@ -106,7 +106,6 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
             sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesSend[myRoomNumber])
             #reveive the information to the prev/next room
             receiveInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesRec[myRoomNumber])
-            mesh.doRelaxation(omega)
         #(even rooms)
         else:
             #reveive the information to the prev/next room
@@ -115,8 +114,8 @@ def doCalculation(stepsize=0.05,numbIter=10,omega=0.8,):
             mesh.solveMesh()
             #send the information to the prev/next room
             sendInterfaceInfo(comm,myRoomNumber,numberRooms,interfaces,arrInterfaceTypesSend[myRoomNumber])
-            #do relaxation
-            mesh.doRelaxation(omega)
+        #do relaxation
+        mesh.doRelaxation(omega)
         count=count+1
     return mesh
 

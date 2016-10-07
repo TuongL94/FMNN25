@@ -53,6 +53,7 @@ def initRoom2():
     for k in range(xNodes):
         #Upper heater wall
         matrix[0,k].setFuncVal(40)
+        matrix[0,k].setPrevFuncVal(40)
         matrix[0,k].setNodeType('Dirichlet')
         #Lower window wall
         matrix[yNodes-1,k].setFuncVal(5)
